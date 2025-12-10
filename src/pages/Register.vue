@@ -65,23 +65,6 @@
         </button>
       </form>
 
-      <!-- Error Message -->
-      <p
-        v-if="error"
-        class="text-red-500 mt-3 text-center text-sm sm:text-base"
-      >
-        {{ error }}
-      </p>
-
-      <!-- Success Message -->
-      <p
-        v-if="success"
-        class="text-green-500 mt-3 text-center text-sm sm:text-base"
-      >
-        {{ success }}
-      </p>
-
-      <!-- Login Link -->
       <div class="mt-4 text-center">
         <p class="text-gray-400 text-xs sm:text-sm">
           Already have an account?
@@ -134,7 +117,7 @@ const handleSubmit = async () => {
       router.push("/login");
     }, 1500);
   } catch (err) {
-    error.value = err.response?.data?.message || "Ошибка регистрации";
+    console.log(err.response?.data?.message || "Ошибка регистрации");
   }
 };
 </script>

@@ -47,7 +47,6 @@
           />
         </div>
 
-        <!-- Submit Button -->
         <button
           type="submit"
           class="w-full bg-[#6C5BD4] text-white py-2.5 sm:py-3 my-3 sm:my-5 font-clash rounded-lg hover:bg-[#5a4bc4] transition-colors text-sm sm:text-base active:scale-[0.98]"
@@ -56,23 +55,6 @@
         </button>
       </form>
 
-      <!-- Error Message -->
-      <p
-        v-if="error"
-        class="text-red-500 mt-3 text-center text-sm sm:text-base"
-      >
-        {{ error }}
-      </p>
-
-      <!-- Success Message -->
-      <p
-        v-if="success"
-        class="text-green-500 mt-3 text-center text-sm sm:text-base"
-      >
-        {{ success }}
-      </p>
-
-      <!-- Register Link -->
       <div class="mt-4 text-center">
         <p class="text-gray-400 text-xs sm:text-sm">
           Don't have an account?
@@ -84,17 +66,6 @@
           </router-link>
         </p>
       </div>
-      <!-- Google Login Button -->
-      <button
-        @click="handleGoogleLogin"
-        class="w-full bg-white text-black py-2.5 sm:py-3 font-clash rounded-lg mt-3 flex items-center justify-center gap-2 border active:scale-[0.98]"
-      >
-        <img
-          src="https://www.svgrepo.com/show/475656/google-color.svg"
-          class="w-5 h-5"
-        />
-        Continue with Google
-      </button>
     </div>
   </div>
 </template>
@@ -125,7 +96,6 @@ const handleSubmit = async () => {
 
     success.value = "Got it! You are logged in.";
 
-    // Save token if returned
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
     }
@@ -134,7 +104,7 @@ const handleSubmit = async () => {
     form.password = "";
 
     setTimeout(() => {
-      router.push("/");
+      router.push("/home");
     }, 1500);
   } catch (err) {
     error.value = err.response?.data?.message || "Login failed";

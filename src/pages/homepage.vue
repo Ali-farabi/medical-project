@@ -6,7 +6,7 @@
           <div class="flex-shrink-0">
             <router-link
               to="/"
-              class="text-white font-clash text-xl sm:text-2xl font-semibold"
+              class="text-white font-clash text-xl sm:text-2xl font-light"
             >
               Care+
             </router-link>
@@ -15,11 +15,9 @@
           <nav class="hidden md:flex items-center space-x-2">
             <router-link
               to="/overview"
-              class="px-6 py-2.5 rounded-full font-clash text-sm font-medium transition-all duration-200"
+              class="px-6 py-2.5 rounded-full font-clash text-sm font-medium transition-all duration-200 text-[#CBCBCB]"
               :class="
-                isActive('/overview')
-                  ? 'bg-[#ff6000] text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                isActive('/') ? 'bg-[#ff6000] text-white' : 'bg-[#242424]'
               "
             >
               Overview
@@ -27,30 +25,25 @@
 
             <router-link
               to="/analytics"
-              class="px-6 py-2.5 rounded-full font-clash text-sm font-medium transition-all duration-200"
+              class="px-6 py-2.5 rounded-full font-clash text-sm font-medium transition-all duration-200 text-[#CBCBCB]"
               :class="
-                isActive('/analytics')
-                  ? 'bg-[#ff6000] text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                isActive('/') ? 'bg-[#ff6000] text-white' : 'bg-[#242424]'
               "
             >
               Analytics
             </router-link>
 
             <router-link
-              to="/patients"
-              class="px-6 py-2.5 rounded-full font-clash text-sm font-medium transition-all duration-200"
+              to="/profile"
+              class="px-6 py-2.5 rounded-full font-clash text-sm font-medium transition-all duration-200 text-[#CBCBCB]"
               :class="
-                isActive('/patients')
-                  ? 'bg-[#ff6000] text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                isActive('/') ? 'bg-[#ff6000] text-white' : 'bg-[#242424]'
               "
             >
-              Patients
+              Profile
             </router-link>
           </nav>
 
-          <!-- Mobile Menu Button -->
           <button
             @click="toggleMenu"
             class="md:hidden text-white p-2 rounded-lg hover:bg-gray-800 transition-colors"
