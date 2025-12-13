@@ -3,6 +3,7 @@ import Register from "../pages/Register.vue";
 import Login from "../pages/Login.vue";
 import Home from "../pages/homepage.vue";
 import Profile from "../pages/profile.vue";
+import admin from "../pages/ AdminDashboard.vue";
 const routes = [
   {
     path: "/",
@@ -27,6 +28,15 @@ const routes = [
     path: "/profile",
     name: "Profile",
     component: Profile,
+  },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: admin,
+    meta: {
+      requiresAuth: true,
+      role: "admin",
+    },
   },
 ];
 

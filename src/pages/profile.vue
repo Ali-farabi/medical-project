@@ -59,9 +59,7 @@
             :class="
               !isDark
                 ? 'bg-[#ff6000] text-white'
-                : isDark
-                ? 'text-gray-300 hover:bg-[#333333]'
-                : 'text-gray-700 hover:bg-gray-50'
+                : 'text-gray-300 hover:bg-[#333333]'
             "
           >
             <svg
@@ -85,8 +83,6 @@
             :class="
               isDark
                 ? 'bg-[#ff6000] text-white'
-                : isDark
-                ? 'text-gray-300 hover:bg-[#333333]'
                 : 'text-gray-700 hover:bg-gray-50'
             "
           >
@@ -113,13 +109,12 @@
       class="min-h-screen transition-colors duration-300"
       :class="isDark ? 'bg-[#111111]' : 'bg-[#F9FAFB]'"
     >
-      <!-- Header -->
       <header>
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-between h-20">
             <router-link
               to="/home"
-              class="text-2xl font-clash font-bold transition-colors"
+              class="font-clash text-xl sm:text-2xl font-medium transition-colors"
               :class="isDark ? 'text-white' : 'text-[#111111]'"
             >
               Care+
@@ -139,10 +134,44 @@
         </div>
       </header>
 
-      <!-- Main Content -->
-      <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div v-if="loading" class="flex items-center justify-center min-h-[60vh]">
+        <div class="text-center">
+          <div
+            class="w-16 h-16 border-4 border-[#ff6000] border-t-transparent rounded-full animate-spin mx-auto mb-4"
+          ></div>
+          <p
+            class="font-clash"
+            :class="isDark ? 'text-white' : 'text-[#111111]'"
+          >
+            Загрузка...
+          </p>
+        </div>
+      </div>
+
+      <div v-if="corsError" class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div
+          class="max-w-2xl mx-auto p-6 rounded-xl bg-red-500/10 border border-red-500/20"
+        >
+          <h3 class="text-lg font-clash font-bold text-red-500 mb-2">
+            Ошибка подключения к серверу
+          </h3>
+          <p class="text-sm font-clash text-red-400 mb-4">
+            {{ corsError }}
+          </p>
+          <button
+            @click="retryFetch"
+            class="px-6 py-2.5 bg-red-500 text-white rounded-xl font-clash font-medium hover:bg-red-600 transition-all"
+          >
+            Повторить попытку
+          </button>
+        </div>
+      </div>
+
+      <main
+        v-else-if="!loading"
+        class="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      >
         <div class="grid lg:grid-cols-12 gap-8">
-          <!-- Sidebar -->
           <div class="lg:col-span-4">
             <div
               class="rounded-3xl p-8 transition-all duration-300 border"
@@ -152,7 +181,6 @@
                   : 'bg-white border-gray-200 shadow-lg'
               "
             >
-              <!-- Avatar -->
               <div class="flex flex-col items-center space-y-4">
                 <div class="relative">
                   <div
@@ -166,26 +194,13 @@
                           : 'bg-white text-[#111111]'
                       "
                     >
-                      {{ userData.name.charAt(0).toUpperCase() }}
+                      {{
+                        userData.name
+                          ? userData.name.charAt(0).toUpperCase()
+                          : "?"
+                      }}
                     </div>
                   </div>
-                  <button
-                    class="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-                  >
-                    <svg
-                      class="w-5 h-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                      />
-                    </svg>
-                  </button>
                 </div>
 
                 <div class="text-center space-y-2">
@@ -193,7 +208,7 @@
                     class="text-2xl font-clash font-bold"
                     :class="isDark ? 'text-white' : 'text-[#111111]'"
                   >
-                    {{ userData.name }}
+                    {{ userData.name || "Пользователь" }}
                   </h2>
                   <p
                     class="text-sm"
@@ -313,7 +328,7 @@
                     Имя
                   </label>
                   <input
-                    v-model="userData.name"
+                    v-model="editedUser.name"
                     type="text"
                     class="w-full px-4 py-3 rounded-xl border font-clash transition-all outline-none"
                     :class="
@@ -331,7 +346,7 @@
                     Email
                   </label>
                   <input
-                    v-model="userData.email"
+                    v-model="editedUser.email"
                     type="email"
                     class="w-full px-4 py-3 rounded-xl border font-clash transition-all outline-none"
                     :class="
@@ -341,11 +356,62 @@
                     "
                   />
                 </div>
+                <div>
+                  <label
+                    class="block text-sm font-clash font-medium mb-2"
+                    :class="isDark ? 'text-[#CBCBCB]' : 'text-[#555555]'"
+                  >
+                    Телефон
+                  </label>
+                  <input
+                    v-model="editedUser.phone"
+                    type="tel"
+                    placeholder="+7 (___) ___-__-__"
+                    class="w-full px-4 py-3 rounded-xl border font-clash transition-all outline-none"
+                    :class="
+                      isDark
+                        ? 'bg-[#333333] border-gray-700 text-white focus:border-[#ff6000]'
+                        : 'bg-gray-50 border-gray-200 text-[#111111] focus:border-[#ff6000]'
+                    "
+                  />
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-clash font-medium mb-2"
+                    :class="isDark ? 'text-[#CBCBCB]' : 'text-[#555555]'"
+                  >
+                    Адрес
+                  </label>
+                  <textarea
+                    v-model="editedUser.address"
+                    rows="3"
+                    placeholder="Введите ваш адрес"
+                    class="w-full px-4 py-3 rounded-xl border font-clash transition-all outline-none resize-none"
+                    :class="
+                      isDark
+                        ? 'bg-[#333333] border-gray-700 text-white focus:border-[#ff6000]'
+                        : 'bg-gray-50 border-gray-200 text-[#111111] focus:border-[#ff6000]'
+                    "
+                  ></textarea>
+                </div>
+                <div
+                  v-if="saveMessage"
+                  class="p-4 rounded-xl"
+                  :class="
+                    saveSuccess
+                      ? 'bg-green-500/10 text-green-500'
+                      : 'bg-red-500/10 text-red-500'
+                  "
+                >
+                  <p class="font-clash text-sm">{{ saveMessage }}</p>
+                </div>
                 <button
                   @click="saveProfile"
-                  class="px-8 py-3 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] text-white rounded-xl font-clash font-medium shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                  :disabled="saving"
+                  class="px-8 py-3 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] text-white rounded-xl font-clash font-medium shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Сохранить изменения
+                  {{ saving ? "Сохранение..." : "Сохранить изменения" }}
                 </button>
               </div>
             </div>
@@ -374,7 +440,7 @@
                 </button>
               </div>
 
-              <div v-if="appointments.length === 0" class="text-center py-16">
+              <div class="text-center py-16">
                 <div
                   class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-r from-[#ff6000]/10 to-[#ff8c42]/10 flex items-center justify-center"
                 >
@@ -410,50 +476,6 @@
                 >
                   Записаться сейчас
                 </button>
-              </div>
-
-              <div v-else class="space-y-4">
-                <div
-                  v-for="(appointment, index) in appointments"
-                  :key="index"
-                  class="p-6 rounded-xl border transition-all"
-                  :class="
-                    isDark
-                      ? 'bg-[#333333] border-gray-700 hover:border-[#ff6000]'
-                      : 'bg-gray-50 border-gray-200 hover:border-[#ff6000]'
-                  "
-                >
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h4
-                        class="font-clash font-bold text-lg"
-                        :class="isDark ? 'text-white' : 'text-[#111111]'"
-                      >
-                        {{ appointment.doctorName }}
-                      </h4>
-                      <p
-                        class="text-sm font-clash"
-                        :class="isDark ? 'text-[#CBCBCB]' : 'text-[#555555]'"
-                      >
-                        {{ appointment.specialty }}
-                      </p>
-                    </div>
-                    <div class="text-right">
-                      <p
-                        class="font-clash font-medium"
-                        :class="isDark ? 'text-white' : 'text-[#111111]'"
-                      >
-                        {{ appointment.date }}
-                      </p>
-                      <p
-                        class="text-sm font-clash"
-                        :class="isDark ? 'text-[#CBCBCB]' : 'text-[#555555]'"
-                      >
-                        {{ appointment.time }}
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -534,15 +556,33 @@ const isDark = ref(true);
 const showDropdown = ref(false);
 const activeTab = ref("profile");
 const notifications = ref(true);
+const loading = ref(true);
+const saving = ref(false);
+const saveMessage = ref("");
+const saveSuccess = ref(false);
+const corsError = ref("");
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const userData = ref({
-  id: 5,
-  email: "aliba@gmail.com",
-  name: "aliba",
+  id: null,
+  email: "",
+  name: "",
   role: "user",
+  phone: "",
+  date_of_birth: "",
+  address: "",
   avatar: null,
-  created_at: "2025-12-13T07:10:30.018Z",
-  updated_at: "2025-12-13T07:10:30.018Z",
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+});
+
+const editedUser = ref({
+  name: "",
+  email: "",
+  phone: "",
+
+  address: "",
 });
 
 const appointments = ref([]);
@@ -565,17 +605,82 @@ const navItems = [
   },
 ];
 
-onMounted(() => {
+const fetchUserData = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    console.error("No token found, redirecting to login");
+    router.push("/");
+    return;
+  }
+
+  console.log("Fetching user data with token:", token);
+  console.log("API URL:", `${API_URL}/auth/me`);
+
+  try {
+    const response = await fetch(`${API_URL}/auth/me`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("Response status:", response.status);
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log("User data received:", result);
+
+      const user = result.data;
+
+      userData.value = user;
+      editedUser.value = {
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+
+        address: user.address || "",
+      };
+      localStorage.setItem("user", JSON.stringify(user));
+      corsError.value = "";
+    } else if (response.status === 401) {
+      console.error("Unauthorized - token expired or invalid");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      router.push("/");
+    } else {
+      const errorData = await response.json();
+      console.error("Error response:", errorData);
+      corsError.value = errorData.message || "Ошибка загрузки данных";
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+
+    if (error.message.includes("Failed to fetch")) {
+      corsError.value =
+        "Не удалось подключиться к серверу. Проверьте подключение к интернету или обратитесь к администратору.";
+    } else {
+      corsError.value = "Произошла ошибка при загрузке данных профиля";
+    }
+  } finally {
+    loading.value = false;
+  }
+};
+
+const retryFetch = () => {
+  loading.value = true;
+  corsError.value = "";
+  fetchUserData();
+};
+
+onMounted(async () => {
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme) {
     isDark.value = savedTheme === "dark";
   }
 
-  const token = localStorage.getItem("token");
-  const savedUser = localStorage.getItem("user");
-  if (savedUser) {
-    userData.value = JSON.parse(savedUser);
-  }
+  await fetchUserData();
 
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".fixed")) {
@@ -595,6 +700,7 @@ const setTheme = (theme) => {
 };
 
 const formatDate = (dateString) => {
+  if (!dateString) return "Не указано";
   const date = new Date(dateString);
   return date.toLocaleDateString("ru-RU", {
     year: "numeric",
@@ -606,23 +712,63 @@ const formatDate = (dateString) => {
 const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-  router.push("/login");
+  router.push("/");
 };
 
 const goToBooking = () => {
   router.push("/home");
 };
 
-const saveProfile = () => {
-  localStorage.setItem("user", JSON.stringify(userData.value));
-  console.log("Profile saved:", userData.value);
+const saveProfile = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    router.push("/");
+    return;
+  }
+
+  saving.value = true;
+  saveMessage.value = "";
+  saveSuccess.value = false;
+
+  try {
+    const response = await fetch(`${API_URL}/auth/me`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: editedUser.value.name,
+        email: editedUser.value.email,
+        phone: editedUser.value.phone,
+
+        address: editedUser.value.address,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      userData.value = result.data;
+      localStorage.setItem("user", JSON.stringify(result.data));
+
+      saveMessage.value = "Профиль успешно обновлён";
+      saveSuccess.value = true;
+
+      setTimeout(() => {
+        saveMessage.value = "";
+      }, 3000);
+    } else {
+      saveMessage.value = result.message || "Ошибка сохранения профиля";
+      saveSuccess.value = false;
+    }
+  } catch (error) {
+    console.error("Save profile error:", error);
+    saveMessage.value = "Ошибка соединения с сервером";
+    saveSuccess.value = false;
+  } finally {
+    saving.value = false;
+  }
 };
 </script>
-
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Clash+Display:wght@300;400;500;600;700&display=swap");
-
-.font-clash {
-  font-family: "Clash Display", sans-serif;
-}
-</style>

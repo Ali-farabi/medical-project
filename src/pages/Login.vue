@@ -158,6 +158,24 @@
         Login
       </h2>
 
+      <!-- Сообщение об ошибке -->
+      <div
+        v-if="error"
+        class="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20"
+      >
+        <p class="text-red-500 text-sm font-clash text-center">{{ error }}</p>
+      </div>
+
+      <!-- Сообщение об успехе -->
+      <div
+        v-if="success"
+        class="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20"
+      >
+        <p class="text-green-500 text-sm font-clash text-center">
+          {{ success }}
+        </p>
+      </div>
+
       <form @submit.prevent="handleSubmit">
         <div class="mb-3 sm:mb-4">
           <label
@@ -176,6 +194,7 @@
                 : 'bg-[#F9FAFB] border border-gray-200 text-[#111111] placeholder-gray-400'
             "
             required
+            :disabled="loading"
           />
         </div>
 
@@ -196,14 +215,16 @@
                 : 'bg-[#F9FAFB] border border-gray-200 text-[#111111] placeholder-gray-400'
             "
             required
+            :disabled="loading"
           />
         </div>
 
         <button
           type="submit"
-          class="w-full bg-[#6C5BD4] text-white py-2.5 sm:py-3 my-3 sm:my-5 font-clash rounded-lg hover:bg-[#5a4bc4] transition-all text-sm sm:text-base active:scale-[0.98]"
+          :disabled="loading"
+          class="w-full bg-[#6C5BD4] text-white py-2.5 sm:py-3 my-3 sm:my-5 font-clash rounded-lg hover:bg-[#5a4bc4] transition-all text-sm sm:text-base active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Login
+          {{ loading ? "Вход..." : "Login" }}
         </button>
       </form>
 
@@ -233,6 +254,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const isDark = ref(true);
 const showDropdown = ref(false);
+const loading = ref(false);
 
 const form = reactive({
   email: "",
@@ -268,26 +290,48 @@ const setTheme = (theme) => {
 const handleSubmit = async () => {
   error.value = "";
   success.value = "";
+  loading.value = true;
+
   try {
     const response = await axios.post(
       "https://medical-backend-54hp.onrender.com/api/auth/login",
       form
     );
 
-    success.value = "Got it! You are logged in.";
+    console.log("Login response:", response.data);
 
-    if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
+    if (
+      response.data.success &&
+      response.data.data &&
+      response.data.data.token
+    ) {
+      const token = response.data.data.token;
+      const user = response.data.data.user;
+
+      localStorage.setItem("token", token);
+
+      localStorage.setItem("user", JSON.stringify(user));
+
+      console.log("Token saved:", token);
+      console.log("User saved:", user);
+
+      success.value = "Вход выполнен успешно!";
+
+      form.email = "";
+      form.password = "";
+
+      setTimeout(() => {
+        router.push("/home");
+      }, 1000);
+    } else {
+      error.value = "Не удалось получить токен авторизации";
     }
-
-    form.email = "";
-    form.password = "";
-
-    setTimeout(() => {
-      router.push("/home");
-    }, 1500);
   } catch (err) {
-    error.value = err.response?.data?.message || "Login failed";
+    console.error("Login error:", err);
+    error.value =
+      err.response?.data?.message || "Ошибка входа. Проверьте данные.";
+  } finally {
+    loading.value = false;
   }
 };
 </script>

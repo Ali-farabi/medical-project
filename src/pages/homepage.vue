@@ -10,8 +10,8 @@
           class="p-3 rounded-xl transition-all duration-300 border backdrop-blur-sm"
           :class="
             isDark
-              ? 'bg-[#242424] border-gray-700 text-white hover:bg-[#333333]'
-              : 'bg-white border-gray-200 text-gray-800 hover:bg-gray-50 shadow-md'
+              ? 'bg-[#242424]  text-white hover:bg-[#333333]'
+              : 'bg-white  text-gray-800 hover:bg-gray-50 shadow-md'
           "
         >
           <svg
@@ -169,10 +169,8 @@
         </div>
       </header>
 
-      <!-- Hero Section -->
       <main class="container mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-          <!-- Left Content -->
           <div class="space-y-8">
             <div class="space-y-4">
               <div
@@ -215,7 +213,6 @@
               </p>
             </div>
 
-            <!-- CTA Buttons -->
             <div class="flex flex-col sm:flex-row gap-4">
               <button
                 @click="scrollToBooking"
@@ -251,7 +248,6 @@
               </button>
             </div>
 
-            <!-- Stats -->
             <div class="grid grid-cols-3 gap-6 pt-8">
               <div v-for="stat in stats" :key="stat.label" class="space-y-1">
                 <div
@@ -270,19 +266,14 @@
             </div>
           </div>
 
-          <!-- Right Content - Doctor Card -->
           <div class="relative">
             <div
               class="absolute inset-0 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] rounded-3xl blur-3xl opacity-20 animate-pulse"
             ></div>
             <div
-              class="relative rounded-3xl p-8 backdrop-blur-sm transition-all duration-300 border"
-              :class="
-                isDark
-                  ? 'bg-[#242424]/80 border-gray-700/50'
-                  : 'bg-white/80 border-gray-200 shadow-2xl'
-              "
+              class="relative rounded-3xl p-8 backdrop-blur-sm transition-all duration-300"
             >
+              <img src="../assets/doctor.png" alt="" />
               <div class="space-y-6"></div>
             </div>
           </div>
@@ -295,7 +286,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-
+const loading = ref(true);
 const router = useRouter();
 const isDark = ref(true);
 const showDropdown = ref(false);
