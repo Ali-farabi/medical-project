@@ -58,9 +58,7 @@
             class="w-full px-4 py-3 flex items-center space-x-3 transition-colors"
             :class="
               !isDark
-                ? isDark
-                  ? 'bg-[#ff6000] text-white'
-                  : 'bg-[#ff6000] text-white'
+                ? 'bg-[#ff6000] text-white'
                 : isDark
                 ? 'text-gray-300 hover:bg-[#333333]'
                 : 'text-gray-700 hover:bg-gray-50'
@@ -98,9 +96,7 @@
             class="w-full px-4 py-3 flex items-center space-x-3 transition-colors"
             :class="
               isDark
-                ? isDark
-                  ? 'bg-[#ff6000] text-white'
-                  : 'bg-[#ff6000] text-white'
+                ? 'bg-[#ff6000] text-white'
                 : isDark
                 ? 'text-gray-300 hover:bg-[#333333]'
                 : 'text-gray-700 hover:bg-gray-50'
@@ -145,20 +141,20 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-between h-16 sm:h-20">
             <div class="flex-shrink-0">
-              <a
-                href="#"
-                class="font-clash text-xl sm:text-2xl font-light transition-colors"
+              <router-link
+                to="/home"
+                class="font-clash text-xl sm:text-2xl font-medium transition-colors"
                 :class="isDark ? 'text-white' : 'text-[#111111]'"
               >
                 Care+
-              </a>
+              </router-link>
             </div>
 
             <nav class="hidden md:flex items-center space-x-2">
-              <a
+              <button
                 v-for="item in navItems"
-                :key="item"
-                href="#"
+                :key="item.name"
+                @click="navigateTo(item.path)"
                 class="px-6 py-2.5 rounded-full font-clash text-sm font-medium transition-all duration-200"
                 :class="
                   isDark
@@ -166,29 +162,163 @@
                     : 'bg-white text-[#555555] hover:bg-gray-50 shadow-sm'
                 "
               >
-                {{ item }}
-              </a>
+                {{ item.name }}
+              </button>
             </nav>
           </div>
         </div>
       </header>
+
+      <!-- Hero Section -->
+      <main class="container mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <!-- Left Content -->
+          <div class="space-y-8">
+            <div class="space-y-4">
+              <div
+                class="inline-flex items-center px-4 py-2 rounded-full backdrop-blur-sm transition-all duration-300"
+                :class="
+                  isDark
+                    ? 'bg-[#ff6000]/10 border border-[#ff6000]/20'
+                    : 'bg-[#ff6000]/5 border border-[#ff6000]/10'
+                "
+              >
+                <span
+                  class="w-2 h-2 rounded-full bg-[#ff6000] mr-2 animate-pulse"
+                ></span>
+                <span
+                  class="font-clash text-sm font-medium"
+                  :class="isDark ? 'text-[#ff6000]' : 'text-[#ff6000]'"
+                >
+                  Онлайн бронирование 24/7
+                </span>
+              </div>
+
+              <h1
+                class="font-clash text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight transition-colors"
+                :class="isDark ? 'text-white' : 'text-[#111111]'"
+              >
+                Запись к врачу за
+                <span
+                  class="bg-gradient-to-r from-[#ff6000] to-[#ff8c42] bg-clip-text text-transparent"
+                >
+                  2 минуты
+                </span>
+              </h1>
+
+              <p
+                class="text-lg sm:text-xl leading-relaxed transition-colors"
+                :class="isDark ? 'text-[#CBCBCB]' : 'text-[#555555]'"
+              >
+                Выберите специалиста, удобное время и получите подтверждение
+                мгновенно. Без очередей и звонков в регистратуру.
+              </p>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4">
+              <button
+                @click="scrollToBooking"
+                class="group px-8 py-4 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] text-white rounded-2xl font-clash font-medium text-lg shadow-lg shadow-[#ff6000]/25 hover:shadow-xl hover:shadow-[#ff6000]/40 transition-all duration-300 hover:scale-105"
+              >
+                <span class="flex items-center justify-center">
+                  Записаться на приём
+                  <svg
+                    class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </span>
+              </button>
+
+              <button
+                class="px-8 py-4 rounded-2xl font-clash font-medium text-lg transition-all duration-300 border-2"
+                :class="
+                  isDark
+                    ? 'bg-[#242424] border-gray-700 text-white hover:bg-[#333333]'
+                    : 'bg-white border-gray-200 text-[#111111] hover:bg-gray-50 shadow-md'
+                "
+              >
+                Посмотреть врачей
+              </button>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-6 pt-8">
+              <div v-for="stat in stats" :key="stat.label" class="space-y-1">
+                <div
+                  class="font-clash text-3xl font-bold transition-colors"
+                  :class="isDark ? 'text-white' : 'text-[#111111]'"
+                >
+                  {{ stat.value }}
+                </div>
+                <div
+                  class="text-sm transition-colors"
+                  :class="isDark ? 'text-[#CBCBCB]' : 'text-[#555555]'"
+                >
+                  {{ stat.label }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Content - Doctor Card -->
+          <div class="relative">
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] rounded-3xl blur-3xl opacity-20 animate-pulse"
+            ></div>
+            <div
+              class="relative rounded-3xl p-8 backdrop-blur-sm transition-all duration-300 border"
+              :class="
+                isDark
+                  ? 'bg-[#242424]/80 border-gray-700/50'
+                  : 'bg-white/80 border-gray-200 shadow-2xl'
+              "
+            >
+              <div class="space-y-6"></div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const isDark = ref(true);
 const showDropdown = ref(false);
-const navItems = ["Overview", "Analytics", "Profile"];
 
-onMounted(() => {
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme) {
-    isDark.value = savedTheme === "dark";
-  }
-});
+const navItems = [
+  { name: "Overview", path: "/home" },
+  { name: "Analytics", path: "/analytics" },
+  { name: "Profile", path: "/profile" },
+];
+
+const stats = [
+  { value: "500+", label: "Врачей" },
+  { value: "50+", label: "Специализаций" },
+  { value: "24/7", label: "Поддержка" },
+];
+
+const navigateTo = (path) => {
+  router.push(path);
+};
+
+const scrollToBooking = () => {
+  console.log("Scrolling to booking section");
+};
 
 const toggleTheme = () => {
   showDropdown.value = !showDropdown.value;
@@ -201,6 +331,11 @@ const setTheme = (theme) => {
 };
 
 onMounted(() => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme) {
+    isDark.value = savedTheme === "dark";
+  }
+
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".fixed")) {
       showDropdown.value = false;
