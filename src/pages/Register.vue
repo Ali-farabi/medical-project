@@ -135,7 +135,7 @@
     </div>
 
     <h1
-      class="font-clash text-lg sm:text-xl p-4 sm:p-10 absolute left-0 right-0 top-0 transition-colors"
+      class="font-clash text-xl sm:text-2xl font-medium p-4 sm:p-10 absolute left-0 right-0 top-0 transition-colors"
       :class="isDark ? 'text-white' : 'text-[#111111]'"
     >
       Care +
@@ -237,6 +237,9 @@
           >
             Login
           </router-link>
+        </p>
+        <p>
+          <span class="text-red-500">{{ err }}</span>
         </p>
       </div>
     </div>
