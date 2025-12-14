@@ -121,14 +121,14 @@
             </router-link>
             <button
               @click="logout"
-              class="px-6 py-2.5 rounded-full text-sm font-clash font-medium transition-all"
+              class="px-6 py-2.5 rounded-full font-clash text-sm font-medium transition-all duration-200"
               :class="
                 isDark
-                  ? 'bg-[#242424] text-[#CBCBCB] hover:bg-[#333333]'
-                  : 'bg-white text-[#555555] hover:bg-gray-50 shadow-sm'
+                  ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
+                  : 'bg-red-50 text-red-600 hover:bg-red-100'
               "
             >
-              Выход
+              Logout
             </button>
           </div>
         </div>

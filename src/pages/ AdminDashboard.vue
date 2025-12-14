@@ -4,8 +4,7 @@
     class="min-h-screen transition-colors duration-300"
     :style="{ backgroundColor: isDark ? '#111111' : '#F9FAFB' }"
   >
-    <!-- Theme Toggle -->
-    <div class="fixed top-4 right-4 z-50">
+    <div class="fixed top-3 right-4 z-50">
       <button
         @click="toggleTheme"
         class="p-3 rounded-xl transition-all duration-300 border backdrop-blur-sm"
@@ -46,7 +45,6 @@
       </button>
     </div>
 
-    <!-- Header -->
     <header
       class="border-b"
       :class="isDark ? 'border-gray-800' : 'border-gray-200'"
@@ -55,10 +53,10 @@
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center space-x-8">
             <h1
-              class="text-2xl font-clash font-bold"
+              class="font-clash text-xl sm:text-2xl font-medium transition-colors"
               :class="isDark ? 'text-white' : 'text-[#111111]'"
             >
-              Care+ Admin
+              Care+ admin
             </h1>
             <nav class="hidden md:flex space-x-4">
               <router-link
@@ -85,25 +83,12 @@
               </router-link>
             </nav>
           </div>
-          <button
-            @click="logout"
-            class="px-4 py-2 rounded-lg font-clash text-sm font-medium transition-all"
-            :class="
-              isDark
-                ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
-                : 'bg-red-50 text-red-600 hover:bg-red-100'
-            "
-          >
-            Logout
-          </button>
         </div>
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div
           class="p-6 rounded-2xl border"
           :class="
@@ -118,13 +103,13 @@
                 class="text-sm font-clash font-medium"
                 :class="isDark ? 'text-gray-400' : 'text-gray-600'"
               >
-                Total Users
+                Total Doctors
               </p>
               <p
                 class="text-3xl font-clash font-bold mt-2"
                 :class="isDark ? 'text-white' : 'text-[#111111]'"
               >
-                {{ users.length }}
+                {{ doctors.length }}
               </p>
             </div>
             <div class="p-3 rounded-xl bg-blue-500/10">
@@ -138,7 +123,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
             </div>
@@ -159,13 +144,13 @@
                 class="text-sm font-clash font-medium"
                 :class="isDark ? 'text-gray-400' : 'text-gray-600'"
               >
-                Admins
+                Specialties
               </p>
               <p
                 class="text-3xl font-clash font-bold mt-2"
                 :class="isDark ? 'text-white' : 'text-[#111111]'"
               >
-                {{ users.filter((u) => u.role === "admin").length }}
+                {{ specialties.length }}
               </p>
             </div>
             <div class="p-3 rounded-xl bg-purple-500/10">
@@ -179,7 +164,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                 />
               </svg>
             </div>
@@ -200,13 +185,13 @@
                 class="text-sm font-clash font-medium"
                 :class="isDark ? 'text-gray-400' : 'text-gray-600'"
               >
-                Regular Users
+                Avg Experience
               </p>
               <p
                 class="text-3xl font-clash font-bold mt-2"
                 :class="isDark ? 'text-white' : 'text-[#111111]'"
               >
-                {{ users.filter((u) => u.role === "user").length }}
+                {{ avgExperience }} yr
               </p>
             </div>
             <div class="p-3 rounded-xl bg-green-500/10">
@@ -220,7 +205,48 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="p-6 rounded-2xl border"
+          :class="
+            isDark
+              ? 'bg-[#242424] border-gray-800'
+              : 'bg-white border-gray-200 shadow-sm'
+          "
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p
+                class="text-sm font-clash font-medium"
+                :class="isDark ? 'text-gray-400' : 'text-gray-600'"
+              >
+                Avg Rating
+              </p>
+              <p
+                class="text-3xl font-clash font-bold mt-2"
+                :class="isDark ? 'text-white' : 'text-[#111111]'"
+              >
+                {{ avgRating }} ⭐
+              </p>
+            </div>
+            <div class="p-3 rounded-xl bg-yellow-500/10">
+              <svg
+                class="w-8 h-8 text-yellow-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
                 />
               </svg>
             </div>
@@ -228,7 +254,7 @@
         </div>
       </div>
 
-      <!-- Users Table -->
+      <!-- Doctors Table -->
       <div
         class="rounded-2xl border overflow-hidden"
         :class="
@@ -246,13 +272,13 @@
               class="text-xl font-clash font-bold"
               :class="isDark ? 'text-white' : 'text-[#111111]'"
             >
-              User Management
+              Doctors Management
             </h2>
             <div class="flex items-center space-x-3">
               <input
                 v-model="searchQuery"
                 type="text"
-                placeholder="Search users..."
+                placeholder="Search doctors..."
                 class="px-4 py-2 rounded-lg border font-clash text-sm outline-none"
                 :class="
                   isDark
@@ -264,7 +290,7 @@
                 @click="openCreateModal"
                 class="px-4 py-2 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] text-white rounded-lg font-clash text-sm font-medium hover:shadow-lg transition-all"
               >
-                + Add User
+                + Add Doctor
               </button>
             </div>
           </div>
@@ -281,25 +307,31 @@
                   class="px-6 py-4 text-left text-xs font-clash font-semibold uppercase tracking-wider"
                   :class="isDark ? 'text-gray-400' : 'text-gray-600'"
                 >
-                  User
+                  Doctor
                 </th>
                 <th
                   class="px-6 py-4 text-left text-xs font-clash font-semibold uppercase tracking-wider"
                   :class="isDark ? 'text-gray-400' : 'text-gray-600'"
                 >
-                  Email
+                  Specialty
                 </th>
                 <th
                   class="px-6 py-4 text-left text-xs font-clash font-semibold uppercase tracking-wider"
                   :class="isDark ? 'text-gray-400' : 'text-gray-600'"
                 >
-                  Role
+                  Experience
                 </th>
                 <th
                   class="px-6 py-4 text-left text-xs font-clash font-semibold uppercase tracking-wider"
                   :class="isDark ? 'text-gray-400' : 'text-gray-600'"
                 >
-                  Phone
+                  Price
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-clash font-semibold uppercase tracking-wider"
+                  :class="isDark ? 'text-gray-400' : 'text-gray-600'"
+                >
+                  Rating
                 </th>
                 <th
                   class="px-6 py-4 text-left text-xs font-clash font-semibold uppercase tracking-wider"
@@ -311,8 +343,8 @@
             </thead>
             <tbody>
               <tr
-                v-for="user in filteredUsers"
-                :key="user.id"
+                v-for="doctor in filteredDoctors"
+                :key="doctor.id"
                 class="border-b transition-colors"
                 :class="
                   isDark
@@ -322,51 +354,66 @@
               >
                 <td class="px-6 py-4">
                   <div class="flex items-center space-x-3">
-                    <div
-                      class="w-10 h-10 rounded-full bg-gradient-to-r from-[#ff6000] to-[#ff8c42] flex items-center justify-center text-white font-clash font-bold"
-                    >
-                      {{ user.name ? user.name.charAt(0).toUpperCase() : "?" }}
+                    <!-- <img
+                      :src="doctor.photo || 'https://i.pravatar.cc/300?img=12'"
+                      class="w-12 h-12 rounded-full object-cover"
+                      :alt="doctor.name"
+                    /> -->
+                    <div>
+                      <div
+                        class="font-clash font-medium"
+                        :class="isDark ? 'text-white' : 'text-[#111111]'"
+                      >
+                        {{ doctor.name }}
+                      </div>
+                      <div
+                        class="text-xs font-clash"
+                        :class="isDark ? 'text-gray-400' : 'text-gray-500'"
+                      >
+                        {{ doctor.email }}
+                      </div>
                     </div>
-                    <span
-                      class="font-clash font-medium"
-                      :class="isDark ? 'text-white' : 'text-[#111111]'"
-                    >
-                      {{ user.name || "No name" }}
-                    </span>
                   </div>
                 </td>
                 <td class="px-6 py-4">
                   <span
-                    class="font-clash text-sm"
-                    :class="isDark ? 'text-gray-300' : 'text-gray-600'"
+                    class="px-3 py-1 rounded-full text-xs font-clash font-medium bg-blue-500/10 text-blue-500"
+                    >{{ doctor.specialty_name || "N/A" }}</span
                   >
-                    {{ user.email }}
-                  </span>
-                </td>
-                <td class="px-6 py-4">
-                  <span
-                    class="px-3 py-1 rounded-full text-xs font-clash font-medium"
-                    :class="
-                      user.role === 'admin'
-                        ? 'bg-purple-500/10 text-purple-500'
-                        : 'bg-blue-500/10 text-blue-500'
-                    "
-                  >
-                    {{ user.role }}
-                  </span>
                 </td>
                 <td class="px-6 py-4">
                   <span
                     class="font-clash text-sm"
                     :class="isDark ? 'text-gray-300' : 'text-gray-600'"
+                    >{{ doctor.experience_years || 0 }} years</span
                   >
-                    {{ user.phone || "N/A" }}
-                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="font-clash text-sm font-medium"
+                    :class="isDark ? 'text-green-400' : 'text-green-600'"
+                    >{{ doctor.consultation_price || 0 }} ₸</span
+                  >
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center space-x-1">
+                    <span
+                      class="font-clash text-sm font-medium"
+                      :class="isDark ? 'text-yellow-400' : 'text-yellow-600'"
+                      >{{ doctor.rating || 0 }}</span
+                    >
+                    <span class="text-yellow-500">⭐</span>
+                    <span
+                      class="text-xs font-clash"
+                      :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+                      >({{ doctor.reviews_count || 0 }})</span
+                    >
+                  </div>
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex items-center space-x-2">
                     <button
-                      @click="openEditModal(user)"
+                      @click="openEditModal(doctor)"
                       class="p-2 rounded-lg transition-colors"
                       :class="
                         isDark
@@ -389,7 +436,7 @@
                       </svg>
                     </button>
                     <button
-                      @click="confirmDelete(user)"
+                      @click="confirmDelete(doctor)"
                       class="p-2 rounded-lg transition-colors"
                       :class="
                         isDark
@@ -420,14 +467,13 @@
       </div>
     </main>
 
-    <!-- Modal for Create/Edit User -->
     <div
       v-if="showModal"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto"
       @click.self="closeModal"
     >
       <div
-        class="w-full max-w-md rounded-2xl p-6 border"
+        class="w-full max-w-2xl rounded-2xl p-6 border my-8"
         :class="
           isDark ? 'bg-[#242424] border-gray-800' : 'bg-white border-gray-200'
         "
@@ -436,16 +482,15 @@
           class="text-xl font-clash font-bold mb-6"
           :class="isDark ? 'text-white' : 'text-[#111111]'"
         >
-          {{ editingUser ? "Edit User" : "Create New User" }}
+          {{ editingDoctor ? "Edit Doctor" : "Create New Doctor" }}
         </h3>
 
-        <div class="space-y-4">
-          <div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
             <label
               class="block text-sm font-clash font-medium mb-2"
               :class="isDark ? 'text-gray-300' : 'text-gray-700'"
-            >
-              Name
+              >Full Name
             </label>
             <input
               v-model="formData.name"
@@ -456,6 +501,7 @@
                   ? 'bg-[#333333] border-gray-700 text-white'
                   : 'bg-gray-50 border-gray-200 text-[#111111]'
               "
+              placeholder="Dr. Ivan Ivanov"
             />
           </div>
 
@@ -463,9 +509,8 @@
             <label
               class="block text-sm font-clash font-medium mb-2"
               :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+              >Email</label
             >
-              Email
-            </label>
             <input
               v-model="formData.email"
               type="email"
@@ -475,25 +520,7 @@
                   ? 'bg-[#333333] border-gray-700 text-white'
                   : 'bg-gray-50 border-gray-200 text-[#111111]'
               "
-            />
-          </div>
-
-          <div v-if="!editingUser">
-            <label
-              class="block text-sm font-clash font-medium mb-2"
-              :class="isDark ? 'text-gray-300' : 'text-gray-700'"
-            >
-              Password
-            </label>
-            <input
-              v-model="formData.password"
-              type="password"
-              class="w-full px-4 py-3 rounded-lg border font-clash outline-none"
-              :class="
-                isDark
-                  ? 'bg-[#333333] border-gray-700 text-white'
-                  : 'bg-gray-50 border-gray-200 text-[#111111]'
-              "
+              placeholder="doctor@hospital.com"
             />
           </div>
 
@@ -501,9 +528,8 @@
             <label
               class="block text-sm font-clash font-medium mb-2"
               :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+              >Phone</label
             >
-              Phone
-            </label>
             <input
               v-model="formData.phone"
               type="tel"
@@ -513,6 +539,7 @@
                   ? 'bg-[#333333] border-gray-700 text-white'
                   : 'bg-gray-50 border-gray-200 text-[#111111]'
               "
+              placeholder="+7 777 123 4567"
             />
           </div>
 
@@ -520,11 +547,10 @@
             <label
               class="block text-sm font-clash font-medium mb-2"
               :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+              >Specialty *</label
             >
-              Role
-            </label>
             <select
-              v-model="formData.role"
+              v-model="formData.specialty_id"
               class="w-full px-4 py-3 rounded-lg border font-clash outline-none"
               :class="
                 isDark
@@ -532,12 +558,118 @@
                   : 'bg-gray-50 border-gray-200 text-[#111111]'
               "
             >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
+              <option value="">Select specialty</option>
+              <option
+                v-for="spec in specialties"
+                :key="spec.id"
+                :value="spec.id"
+              >
+                {{ spec.name }}
+              </option>
             </select>
           </div>
 
-          <div v-if="modalError" class="p-3 rounded-lg bg-red-500/10">
+          <div>
+            <label
+              class="block text-sm font-clash font-medium mb-2"
+              :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+              >Experience (years)</label
+            >
+            <input
+              v-model.number="formData.experience_years"
+              type="number"
+              min="0"
+              class="w-full px-4 py-3 rounded-lg border font-clash outline-none"
+              :class="
+                isDark
+                  ? 'bg-[#333333] border-gray-700 text-white'
+                  : 'bg-gray-50 border-gray-200 text-[#111111]'
+              "
+              placeholder="5"
+            />
+          </div>
+
+          <div class="col-span-2">
+            <label
+              class="block text-sm font-clash font-medium mb-2"
+              :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+              >Education</label
+            >
+            <input
+              v-model="formData.education"
+              type="text"
+              class="w-full px-4 py-3 rounded-lg border font-clash outline-none"
+              :class="
+                isDark
+                  ? 'bg-[#333333] border-gray-700 text-white'
+                  : 'bg-gray-50 border-gray-200 text-[#111111]'
+              "
+              placeholder="Medical University"
+            />
+          </div>
+
+          <div class="col-span-2">
+            <label
+              class="block text-sm font-clash font-medium mb-2"
+              :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+              >Description</label
+            >
+            <textarea
+              v-model="formData.description"
+              rows="3"
+              class="w-full px-4 py-3 rounded-lg border font-clash outline-none resize-none"
+              :class="
+                isDark
+                  ? 'bg-[#333333] border-gray-700 text-white'
+                  : 'bg-gray-50 border-gray-200 text-[#111111]'
+              "
+              placeholder="Professional description..."
+            ></textarea>
+          </div>
+
+          <div>
+            <label
+              class="block text-sm font-clash font-medium mb-2"
+              :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+              >Consultation Price (₸)</label
+            >
+            <input
+              v-model.number="formData.consultation_price"
+              type="number"
+              min="0"
+              class="w-full px-4 py-3 rounded-lg border font-clash outline-none"
+              :class="
+                isDark
+                  ? 'bg-[#333333] border-gray-700 text-white'
+                  : 'bg-gray-50 border-gray-200 text-[#111111]'
+              "
+              placeholder="5000"
+            />
+          </div>
+
+          <div>
+            <label
+              class="block text-sm font-clash font-medium mb-2"
+              :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+              >Photo URL</label
+            >
+            <input
+              v-model="formData.photo"
+              type="text"
+              class="w-full px-4 py-3 rounded-lg border font-clash outline-none"
+              :class="
+                isDark
+                  ? 'bg-[#333333] border-gray-700 text-white'
+                  : 'bg-gray-50 border-gray-200 text-[#111111]'
+              "
+              placeholder="https://..."
+            />
+          </div>
+
+          <div
+            v-if="modalError"
+            class="col-span-2 p-3 rounded-lg bg-red-500/10"
+          >
             <p class="text-red-500 text-sm font-clash">{{ modalError }}</p>
           </div>
         </div>
@@ -555,17 +687,18 @@
             Cancel
           </button>
           <button
-            @click="saveUser"
+            @click="saveDoctor"
             :disabled="modalLoading"
             class="flex-1 px-4 py-3 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] text-white rounded-lg font-clash font-medium hover:shadow-lg transition-all disabled:opacity-50"
           >
-            {{ modalLoading ? "Saving..." : editingUser ? "Update" : "Create" }}
+            {{
+              modalLoading ? "Saving..." : editingDoctor ? "Update" : "Create"
+            }}
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div
       v-if="showDeleteModal"
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
@@ -599,13 +732,13 @@
             class="text-lg font-clash font-bold mb-2"
             :class="isDark ? 'text-white' : 'text-[#111111]'"
           >
-            Delete User
+            Delete Doctor
           </h3>
           <p
             class="text-sm font-clash mb-6"
             :class="isDark ? 'text-gray-400' : 'text-gray-600'"
           >
-            Are you sure you want to delete this user? This action cannot be
+            Are you sure you want to delete this doctor? This action cannot be
             undone.
           </p>
           <div class="flex space-x-3">
@@ -621,7 +754,7 @@
               Cancel
             </button>
             <button
-              @click="deleteUser"
+              @click="deleteDoctor"
               :disabled="modalLoading"
               class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg font-clash font-medium hover:bg-red-600 transition-all disabled:opacity-50"
             >
@@ -640,139 +773,181 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const isDark = ref(true);
-const users = ref([]);
+const doctors = ref([]);
+const specialties = ref([]);
 const searchQuery = ref("");
 const showModal = ref(false);
 const showDeleteModal = ref(false);
-const editingUser = ref(null);
-const userToDelete = ref(null);
+const editingDoctor = ref(null);
+const doctorToDelete = ref(null);
 const modalLoading = ref(false);
 const modalError = ref("");
-
+const loading = ref(false);
 const API_URL = "https://medical-backend-54hp.onrender.com/api";
 
 const formData = ref({
   name: "",
   email: "",
-  password: "",
   phone: "",
-  role: "user",
+  specialty_id: "",
+  experience_years: 0,
+  education: "",
+  description: "",
+  consultation_price: 0,
+  photo: "",
 });
 
-const filteredUsers = computed(() => {
-  if (!searchQuery.value) return users.value;
-  return users.value.filter(
-    (user) =>
-      user.name?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchQuery.value.toLowerCase())
+const filteredDoctors = computed(() => {
+  if (!searchQuery.value) return doctors.value;
+
+  return doctors.value.filter(
+    (doctor) =>
+      doctor.name?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      doctor.specialty_name
+        ?.toLowerCase()
+        .includes(searchQuery.value.toLowerCase())
   );
 });
 
-const fetchUsers = async () => {
-  const token = localStorage.getItem("token");
+const avgExperience = computed(() => {
+  if (!doctors.value.length) return 0;
+  const total = doctors.value.reduce(
+    (sum, d) => sum + (d.experience_years || 0),
+    0
+  );
+  return Math.round(total / doctors.value.length);
+});
+
+const avgRating = computed(() => {
+  if (!doctors.value.length) return 0;
+  const total = doctors.value.reduce((sum, d) => sum + (d.rating || 0), 0);
+  return (total / doctors.value.length).toFixed(1);
+});
+
+const fetchDoctors = async () => {
+  loading.value = true;
   try {
-    const response = await fetch(`${API_URL}/users`, {
-      headers: { Authorization: `Bearer ${token}` },
+    const res = await fetch(`${API_URL}/doctors`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     });
-    if (response.ok) {
-      const result = await response.json();
-      users.value = result.data || [];
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        router.push("/login");
+        return;
+      }
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
+
+    doctors.value = await res.json();
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Failed to fetch doctors:", error);
+  } finally {
+    loading.value = false;
   }
 };
 
+const fetchSpecialties = async () => {
+  const res = await fetch(`${API_URL}/specialties`);
+  specialties.value = await res.json();
+};
+
 const openCreateModal = () => {
-  editingUser.value = null;
+  editingDoctor.value = null;
+  modalError.value = "";
   formData.value = {
     name: "",
     email: "",
-    password: "",
     phone: "",
-    role: "user",
+    specialty_id: "",
+    experience_years: 0,
+    education: "",
+    description: "",
+    consultation_price: 0,
+    photo: "",
   };
-  modalError.value = "";
   showModal.value = true;
 };
 
-const openEditModal = (user) => {
-  editingUser.value = user;
-  formData.value = {
-    name: user.name || "",
-    email: user.email || "",
-    password: "",
-    phone: user.phone || "",
-    role: user.role || "user",
-  };
+const openEditModal = (doctor) => {
+  editingDoctor.value = doctor;
   modalError.value = "";
+  formData.value = { ...doctor };
   showModal.value = true;
 };
 
 const closeModal = () => {
   showModal.value = false;
-  editingUser.value = null;
   modalError.value = "";
 };
 
-const saveUser = async () => {
-  const token = localStorage.getItem("token");
-  modalLoading.value = true;
-  modalError.value = "";
-
+const saveDoctor = async () => {
   try {
-    const url = editingUser.value
-      ? `${API_URL}/users/${editingUser.value.id}`
-      : `${API_URL}/auth/register`;
+    modalLoading.value = true;
+    modalError.value = "";
 
-    const method = editingUser.value ? "PUT" : "POST";
+    const method = editingDoctor.value ? "PUT" : "POST";
+    const url = editingDoctor.value
+      ? `${API_URL}/doctors/${editingDoctor.value.id}`
+      : `${API_URL}/doctors`;
 
-    const response = await fetch(url, {
+    const res = await fetch(url, {
       method,
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify(formData.value),
     });
 
-    if (response.ok) {
-      await fetchUsers();
-      closeModal();
-    } else {
-      const result = await response.json();
-      modalError.value = result.message || "Error saving user";
-    }
-  } catch (error) {
-    modalError.value = "Network error";
+    if (!res.ok) throw new Error("Failed to save doctor");
+
+    await fetchDoctors();
+    showModal.value = false;
+  } catch (e) {
+    modalError.value = e.message;
   } finally {
     modalLoading.value = false;
   }
 };
 
-const confirmDelete = (user) => {
-  userToDelete.value = user;
+const confirmDelete = (doctor) => {
+  doctorToDelete.value = doctor;
   showDeleteModal.value = true;
 };
 
-const deleteUser = async () => {
-  const token = localStorage.getItem("token");
-  modalLoading.value = true;
-
+const deleteDoctor = async () => {
   try {
-    const response = await fetch(`${API_URL}/users/${userToDelete.value.id}`, {
+    modalLoading.value = true;
+
+    await fetch(`${API_URL}/doctors/${doctorToDelete.value.id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     });
 
-    if (response.ok) {
-      await fetchUsers();
-      showDeleteModal.value = false;
-    }
-  } catch (error) {
-    console.error("Error deleting user:", error);
+    await fetchDoctors();
+    showDeleteModal.value = false;
   } finally {
     modalLoading.value = false;
   }
 };
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+};
+
+const logout = () => {
+  localStorage.removeItem("token");
+  router.push("/login");
+};
+
+onMounted(() => {
+  fetchDoctors();
+  fetchSpecialties();
+});
 </script>
