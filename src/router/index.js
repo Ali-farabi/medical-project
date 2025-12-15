@@ -4,6 +4,8 @@ import Login from "../pages/Login.vue";
 import Home from "../pages/homepage.vue";
 import Profile from "../pages/profile.vue";
 import admin from "../pages/ AdminDashboard.vue";
+import BookingPage from "../pages/BookingPage.vue";
+
 const routes = [
   {
     path: "/",
@@ -37,6 +39,12 @@ const routes = [
       requiresAuth: true,
       role: "admin",
     },
+  },
+  {
+    path: "/booking/:id",
+    name: "Booking",
+    component: BookingPage,
+    meta: { requiresAuth: true },
   },
 ];
 

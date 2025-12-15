@@ -535,11 +535,10 @@ const scrollToBooking = () => {
 };
 
 const openDoctorDetails = (doctor) => {
-  console.log("Opening details for:", doctor);
+  router.push(`/booking/${doctor.id}`);
 };
-
 const bookAppointment = (doctor) => {
-  console.log("Booking appointment with:", doctor);
+  router.push(`/booking/${doctor.id}`);
 };
 
 const toggleTheme = () => {
