@@ -175,24 +175,6 @@
               </div>
             </div>
 
-            <!-- Error Loading Doctor -->
-            <div
-              v-else
-              class="rounded-2xl border p-6 text-center"
-              :class="
-                isDark
-                  ? 'bg-[#242424] border-gray-800'
-                  : 'bg-white border-gray-200 shadow-sm'
-              "
-            >
-              <p
-                class="font-clash"
-                :class="isDark ? 'text-gray-400' : 'text-gray-600'"
-              >
-                Не удалось загрузить информацию о враче
-              </p>
-            </div>
-
             <!-- Calendar -->
             <div
               class="rounded-2xl border p-6 transition-all duration-300"
@@ -314,10 +296,11 @@
             </div>
           </div>
 
-          <!-- Right Side - Time Slots -->
+          <!-- Right Side - Time Slots & Medical Info -->
           <div class="space-y-6">
+            <!-- Time Slots -->
             <div
-              class="rounded-2xl border p-6 transition-all duration-300 min-h-[500px]"
+              class="rounded-2xl border p-6 transition-all duration-300"
               :class="
                 isDark
                   ? 'bg-[#242424] border-gray-800'
@@ -368,40 +351,8 @@
                 </p>
               </div>
 
-              <!-- Error Loading Slots -->
-              <div
-                v-else-if="slotsError"
-                class="flex flex-col items-center justify-center py-20"
-              >
-                <svg
-                  class="w-16 h-16 mb-4 text-red-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <p
-                  class="font-clash text-center mb-4"
-                  :class="isDark ? 'text-gray-400' : 'text-gray-500'"
-                >
-                  Не удалось загрузить доступные слоты
-                </p>
-                <button
-                  @click="fetchAvailableSlots"
-                  class="px-4 py-2 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] text-white rounded-xl font-clash text-sm font-medium hover:shadow-lg transition-all"
-                >
-                  Попробовать снова
-                </button>
-              </div>
-
               <!-- Time Slots -->
-              <div v-else class="space-y-6">
+              <div v-else-if="!slotsError" class="space-y-6">
                 <div
                   v-for="period in timePeriods"
                   :key="period.name"
@@ -434,7 +385,7 @@
 
                 <!-- No Slots Available -->
                 <div
-                  v-if="availableSlots.length === 0 && !slotsError"
+                  v-if="availableSlots.length === 0"
                   class="text-center py-8"
                 >
                   <p
@@ -445,12 +396,153 @@
                   </p>
                 </div>
               </div>
+
+              <!-- Error -->
+              <div
+                v-else
+                class="flex flex-col items-center justify-center py-20"
+              >
+                <svg
+                  class="w-16 h-16 mb-4 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <p
+                  class="font-clash text-center mb-4"
+                  :class="isDark ? 'text-gray-400' : 'text-gray-500'"
+                >
+                  Не удалось загрузить доступные слоты
+                </p>
+                <button
+                  @click="fetchAvailableSlots"
+                  class="px-4 py-2 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] text-white rounded-xl font-clash text-sm font-medium hover:shadow-lg transition-all"
+                >
+                  Попробовать снова
+                </button>
+              </div>
+            </div>
+
+            <!-- Medical Information Form -->
+            <div
+              v-if="selectedDate && selectedTime"
+              class="rounded-2xl border p-6 transition-all duration-300"
+              :class="
+                isDark
+                  ? 'bg-[#242424] border-gray-800'
+                  : 'bg-white border-gray-200 shadow-sm'
+              "
+            >
+              <h3
+                class="font-clash text-lg font-semibold mb-4"
+                :class="isDark ? 'text-white' : 'text-[#111111]'"
+              >
+                Медицинская информация
+              </h3>
+
+              <div class="space-y-4">
+                <!-- Complaints -->
+                <div>
+                  <label
+                    class="block text-sm font-clash font-medium mb-2"
+                    :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+                  >
+                    Жалобы <span class="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    v-model="medicalInfo.complaints"
+                    rows="3"
+                    placeholder="Опишите ваши симптомы и жалобы"
+                    class="w-full px-4 py-3 rounded-xl font-clash text-sm border transition-all"
+                    :class="
+                      isDark
+                        ? 'bg-[#333333] border-gray-700 text-white placeholder-gray-500 focus:border-[#ff6000]'
+                        : 'bg-white border-gray-200 text-[#111111] placeholder-gray-400 focus:border-[#ff6000]'
+                    "
+                  ></textarea>
+                </div>
+
+                <!-- Chronic Diseases -->
+                <div>
+                  <label
+                    class="block text-sm font-clash font-medium mb-2"
+                    :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+                  >
+                    Хронические заболевания
+                  </label>
+                  <textarea
+                    v-model="medicalInfo.chronic_diseases"
+                    rows="2"
+                    placeholder="Укажите хронические заболевания (если есть)"
+                    class="w-full px-4 py-3 rounded-xl font-clash text-sm border transition-all"
+                    :class="
+                      isDark
+                        ? 'bg-[#333333] border-gray-700 text-white placeholder-gray-500 focus:border-[#ff6000]'
+                        : 'bg-white border-gray-200 text-[#111111] placeholder-gray-400 focus:border-[#ff6000]'
+                    "
+                  ></textarea>
+                </div>
+
+                <!-- Height & Weight -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      class="block text-sm font-clash font-medium mb-2"
+                      :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+                    >
+                      Рост (см)
+                    </label>
+                    <input
+                      v-model.number="medicalInfo.height"
+                      type="number"
+                      placeholder="170"
+                      min="50"
+                      max="250"
+                      class="w-full px-4 py-3 rounded-xl font-clash text-sm border transition-all"
+                      :class="
+                        isDark
+                          ? 'bg-[#333333] border-gray-700 text-white placeholder-gray-500 focus:border-[#ff6000]'
+                          : 'bg-white border-gray-200 text-[#111111] placeholder-gray-400 focus:border-[#ff6000]'
+                      "
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-clash font-medium mb-2"
+                      :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+                    >
+                      Вес (кг)
+                    </label>
+                    <input
+                      v-model.number="medicalInfo.weight"
+                      type="number"
+                      placeholder="70"
+                      min="20"
+                      max="300"
+                      step="0.1"
+                      class="w-full px-4 py-3 rounded-xl font-clash text-sm border transition-all"
+                      :class="
+                        isDark
+                          ? 'bg-[#333333] border-gray-700 text-white placeholder-gray-500 focus:border-[#ff6000]'
+                          : 'bg-white border-gray-200 text-[#111111] placeholder-gray-400 focus:border-[#ff6000]'
+                      "
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Booking Button -->
             <button
               @click="confirmBooking"
-              :disabled="!selectedDate || !selectedTime || isBooking"
+              :disabled="!canBook"
               class="w-full px-8 py-4 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] text-white rounded-2xl font-clash font-medium text-lg shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl"
             >
               <span v-if="isBooking">Запись...</span>
@@ -535,9 +627,26 @@ const selectedDate = ref(null);
 const selectedTime = ref(null);
 const availableSlots = ref([]);
 
+const medicalInfo = ref({
+  complaints: "",
+  chronic_diseases: "",
+  height: null,
+  weight: null,
+});
+
 const currentDate = ref(new Date());
 
 const API_URL = "https://medical-backend-54hp.onrender.com/api";
+
+// Computed property to check if booking can proceed
+const canBook = computed(() => {
+  return (
+    selectedDate.value &&
+    selectedTime.value &&
+    medicalInfo.value.complaints.trim() !== "" &&
+    !isBooking.value
+  );
+});
 
 // Calendar
 const currentMonthYear = computed(() => {
@@ -663,20 +772,13 @@ const fetchDoctor = async () => {
   errorMessage.value = "";
   try {
     const doctorId = route.params.id;
-    console.log("Fetching doctor with ID:", doctorId);
-
-    const url = `${API_URL}/doctors/${doctorId}`;
-    console.log("Doctor fetch URL:", url);
-
-    const res = await fetch(url);
-    console.log("Doctor response status:", res.status);
+    const res = await fetch(`${API_URL}/doctors/${doctorId}`);
 
     if (!res.ok) {
       throw new Error(`Failed to fetch doctor (${res.status})`);
     }
 
     const data = await res.json();
-    console.log("Doctor data:", data);
     doctor.value = data;
   } catch (error) {
     console.error("Error fetching doctor:", error);
@@ -687,14 +789,7 @@ const fetchDoctor = async () => {
 };
 
 const fetchAvailableSlots = async () => {
-  if (!selectedDate.value || !doctor.value) {
-    console.log("Cannot fetch slots: missing date or doctor");
-    return;
-  }
-
-  console.log(
-    `Fetching slots for doctor ${doctor.value.id} on ${selectedDate.value}`
-  );
+  if (!selectedDate.value || !doctor.value) return;
 
   loadingSlots.value = true;
   slotsError.value = false;
@@ -702,24 +797,17 @@ const fetchAvailableSlots = async () => {
 
   try {
     const url = `${API_URL}/appointments/available-slots/${doctor.value.id}?date=${selectedDate.value}`;
-    console.log("Request URL:", url);
-
     const res = await fetch(url);
-
-    console.log("Response status:", res.status);
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
-      console.error("Error response:", errorData);
       throw new Error(
         errorData.message || "Ошибка сервера при загрузке слотов"
       );
     }
 
     const data = await res.json();
-    console.log("Slots data:", data);
     availableSlots.value = data.availableSlots || [];
-    console.log(`Loaded ${availableSlots.value.length} available slots`);
   } catch (error) {
     console.error("Error fetching slots:", error);
     slotsError.value = true;
@@ -732,7 +820,7 @@ const fetchAvailableSlots = async () => {
 };
 
 const confirmBooking = async () => {
-  if (!selectedDate.value || !selectedTime.value) return;
+  if (!canBook.value) return;
 
   isBooking.value = true;
   errorMessage.value = "";
@@ -755,6 +843,10 @@ const confirmBooking = async () => {
         doctor_id: doctor.value.id,
         appointment_date: selectedDate.value,
         appointment_time: selectedTime.value,
+        complaints: medicalInfo.value.complaints,
+        chronic_diseases: medicalInfo.value.chronic_diseases || null,
+        height: medicalInfo.value.height || null,
+        weight: medicalInfo.value.weight || null,
       }),
     });
 
@@ -819,9 +911,4 @@ onMounted(() => {
 
   fetchDoctor();
 });
-
-const toggleTheme = () => {
-  isDark.value = !isDark.value;
-  localStorage.setItem("theme", isDark.value ? "dark" : "light");
-};
 </script>
