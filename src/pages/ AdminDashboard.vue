@@ -232,12 +232,12 @@
                 class="text-3xl font-clash font-bold mt-2"
                 :class="isDark ? 'text-white' : 'text-[#111111]'"
               >
-                {{ avgRating }} ⭐
+                {{ avgRating }}
               </p>
             </div>
             <div class="p-3 rounded-xl bg-yellow-500/10">
               <svg
-                class="w-8 h-8 text-yellow-500"
+                class="w-8 h-8 text-[#FF6000]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -254,7 +254,6 @@
         </div>
       </div>
 
-      <!-- Doctors Table -->
       <div
         class="rounded-2xl border overflow-hidden"
         :class="
@@ -377,7 +376,7 @@
                 </td>
                 <td class="px-6 py-4">
                   <span
-                    class="px-3 py-1 rounded-full text-xs font-clash font-medium bg-blue-500/10 text-blue-500"
+                    class="px-3 py-1 rounded-full text-xs font-clash font-medium bg-[#6C5BD4]/10 text-[#6C5BD4]"
                     >{{ doctor.specialty_name || "N/A" }}</span
                   >
                 </td>
@@ -399,10 +398,10 @@
                   <div class="flex items-center space-x-1">
                     <span
                       class="font-clash text-sm font-medium"
-                      :class="isDark ? 'text-yellow-400' : 'text-yellow-600'"
+                      :class="isDark ? 'text-[#FF6000]' : 'text-[#FF6000]'"
                       >{{ doctor.rating || 0 }}</span
                     >
-                    <span class="text-yellow-500">⭐</span>
+                    <span class="text-yellow-500"></span>
                     <span
                       class="text-xs font-clash"
                       :class="isDark ? 'text-gray-500' : 'text-gray-400'"
@@ -547,8 +546,8 @@
             <label
               class="block text-sm font-clash font-medium mb-2"
               :class="isDark ? 'text-gray-300' : 'text-gray-700'"
-              >Specialty *</label
-            >
+              >Specialty
+            </label>
             <select
               v-model="formData.specialty_id"
               class="w-full px-4 py-3 rounded-lg border font-clash outline-none"

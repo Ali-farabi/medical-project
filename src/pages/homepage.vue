@@ -10,8 +10,8 @@
           class="p-3 rounded-xl transition-all duration-300 border backdrop-blur-sm"
           :class="
             isDark
-              ? 'bg-[#242424]  text-white hover:bg-[#333333]'
-              : 'bg-white  text-gray-800 hover:bg-gray-50 shadow-md'
+              ? 'bg-[#242424] border-gray-700 text-white hover:bg-[#333333]'
+              : 'bg-white border-gray-200 text-gray-800 hover:bg-gray-50 shadow-md'
           "
         >
           <svg
@@ -59,9 +59,7 @@
             :class="
               !isDark
                 ? 'bg-[#ff6000] text-white'
-                : isDark
-                ? 'text-gray-300 hover:bg-[#333333]'
-                : 'text-gray-700 hover:bg-gray-50'
+                : 'text-gray-300 hover:bg-[#333333]'
             "
           >
             <svg
@@ -77,7 +75,7 @@
                 d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
               />
             </svg>
-            <span class="font-clash text-sm">Светлая</span>
+            <span class="font-clash text-sm">Light</span>
             <svg
               v-if="!isDark"
               class="w-4 h-4 ml-auto"
@@ -97,8 +95,6 @@
             :class="
               isDark
                 ? 'bg-[#ff6000] text-white'
-                : isDark
-                ? 'text-gray-300 hover:bg-[#333333]'
                 : 'text-gray-700 hover:bg-gray-50'
             "
           >
@@ -115,7 +111,7 @@
                 d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
               />
             </svg>
-            <span class="font-clash text-sm">Тёмная</span>
+            <span class="font-clash text-sm">Dark</span>
             <svg
               v-if="isDark"
               class="w-4 h-4 ml-auto"
@@ -184,11 +180,8 @@
                 <span
                   class="w-2 h-2 rounded-full bg-[#ff6000] mr-2 animate-pulse"
                 ></span>
-                <span
-                  class="font-clash text-sm font-medium"
-                  :class="isDark ? 'text-[#ff6000]' : 'text-[#ff6000]'"
-                >
-                  Онлайн бронирование 24/7
+                <span class="font-clash text-sm font-medium text-[#ff6000]">
+                  Online booking 24/7
                 </span>
               </div>
 
@@ -237,6 +230,7 @@
               </button>
 
               <button
+                @click="scrollToBooking"
                 class="px-8 py-4 rounded-2xl font-clash font-medium text-lg transition-all duration-300 border-2"
                 :class="
                   isDark
@@ -273,8 +267,182 @@
             <div
               class="relative rounded-3xl p-8 backdrop-blur-sm transition-all duration-300"
             >
-              <img src="../assets/doctor.png" alt="" />
-              <div class="space-y-6"></div>
+              <img
+                src="../assets/doctor.png"
+                alt="Doctor"
+                class="w-full h-auto rounded-2xl"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-24" id="doctors-section">
+          <div
+            class="flex flex-col sm:flex-row items-center justify-between mb-8"
+          >
+            <h2
+              class="font-clash text-3xl font-semibold mb-4 sm:mb-0"
+              :class="isDark ? 'text-white' : 'text-[#111111]'"
+            >
+              Наши врачи
+            </h2>
+            <div class="flex items-center space-x-4">
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Искать врача..."
+                class="px-4 py-3 border font-clash text-sm outline-none rounded-xl w-64"
+                :class="
+                  isDark
+                    ? 'bg-[#242424] border-gray-700 text-white placeholder-gray-500'
+                    : 'bg-white border-gray-200 text-[#111111] placeholder-gray-400 shadow-sm'
+                "
+              />
+              <select
+                v-model="selectedSpecialty"
+                class="px-4 py-3 rounded-xl border font-clash outline-none"
+                :class="
+                  isDark
+                    ? 'bg-[#242424] border-gray-700 text-white'
+                    : 'bg-white border-gray-200 text-[#111111] shadow-sm'
+                "
+              >
+                <option value="">Все специальности</option>
+                <option
+                  v-for="spec in specialties"
+                  :key="spec.id"
+                  :value="spec.id"
+                >
+                  {{ spec.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div v-if="loading" class="flex items-center justify-center py-20">
+            <div
+              class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ff6000]"
+            ></div>
+          </div>
+
+          <div
+            v-else-if="filteredDoctors.length === 0"
+            class="text-center py-20"
+          >
+            <p
+              class="font-clash text-lg"
+              :class="isDark ? 'text-gray-400' : 'text-gray-600'"
+            >
+              Врачи не найдены
+            </p>
+          </div>
+
+          <div
+            v-else
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <div
+              v-for="doctor in filteredDoctors"
+              :key="doctor.id"
+              class="rounded-2xl border p-6 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+              :class="
+                isDark
+                  ? 'bg-[#242424] border-gray-800 hover:border-gray-700'
+                  : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md'
+              "
+              @click="openDoctorDetails(doctor)"
+            >
+              <div class="flex items-start space-x-4 mb-4">
+                <div class="flex-1">
+                  <h3
+                    class="font-clash text-lg font-bold mb-1"
+                    :class="isDark ? 'text-white' : 'text-[#111111]'"
+                  >
+                    {{ doctor.name }}
+                  </h3>
+                  <span
+                    class="inline-block px-3 py-1 rounded-full text-xs font-clash font-medium bg-[#6C5BD4]/10 text-[#6C5BD4]"
+                  >
+                    {{ doctor.specialty_name || "N/A" }}
+                  </span>
+                </div>
+              </div>
+
+              <p
+                class="text-sm font-clash mb-4 line-clamp-2"
+                :class="isDark ? 'text-gray-400' : 'text-gray-600'"
+              >
+                {{
+                  doctor.description ||
+                  "Опытный специалист с многолетним стажем работы"
+                }}
+              </p>
+
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center space-x-2">
+                  <svg
+                    class="w-4 h-4"
+                    :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span
+                    class="text-sm font-clash"
+                    :class="isDark ? 'text-gray-400' : 'text-gray-600'"
+                  >
+                    Опыт: {{ doctor.experience_years || 0 }} лет
+                  </span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <svg
+                    class="w-4 h-4 text-[#ff6000]"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                    />
+                  </svg>
+                  <span
+                    class="text-sm font-clash font-medium"
+                    :class="isDark ? 'text-white' : 'text-[#111111]'"
+                  >
+                    {{ doctor.rating || 0 }} ({{ doctor.reviews_count || 0 }}
+                    отзывов)
+                  </span>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center justify-between pt-4 border-t"
+                :class="isDark ? 'border-gray-700' : 'border-gray-200'"
+              >
+                <div>
+                  <p
+                    class="text-xs font-clash mb-1"
+                    :class="isDark ? 'text-gray-500' : 'text-gray-500'"
+                  >
+                    Консультация от
+                  </p>
+                  <p class="text-xl font-clash font-bold text-[#ff6000]">
+                    {{ doctor.consultation_price || 0 }} ₸
+                  </p>
+                </div>
+                <button
+                  class="px-4 py-2 bg-gradient-to-r from-[#ff6000] to-[#ff8c42] text-white rounded-xl font-clash text-sm font-medium hover:shadow-lg transition-all"
+                  @click.stop="bookAppointment(doctor)"
+                >
+                  Записаться
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -284,12 +452,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-const loading = ref(true);
+
 const router = useRouter();
+const loading = ref(true);
 const isDark = ref(true);
 const showDropdown = ref(false);
+const searchQuery = ref("");
+const selectedSpecialty = ref("");
+const doctors = ref([]);
+const specialties = ref([]);
+
+const API_URL = "https://medical-backend-54hp.onrender.com/api";
 
 const navItems = [
   { name: "Overview", path: "/home" },
@@ -303,12 +478,68 @@ const stats = [
   { value: "24/7", label: "Поддержка" },
 ];
 
+const filteredDoctors = computed(() => {
+  let result = doctors.value;
+
+  if (searchQuery.value) {
+    result = result.filter(
+      (doctor) =>
+        doctor.name?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        doctor.specialty_name
+          ?.toLowerCase()
+          .includes(searchQuery.value.toLowerCase())
+    );
+  }
+
+  if (selectedSpecialty.value) {
+    result = result.filter(
+      (doctor) => doctor.specialty_id === selectedSpecialty.value
+    );
+  }
+
+  return result;
+});
+
+const fetchDoctors = async () => {
+  loading.value = true;
+  try {
+    const res = await fetch(`${API_URL}/doctors`);
+    if (!res.ok) throw new Error("Failed to fetch doctors");
+    doctors.value = await res.json();
+  } catch (error) {
+    console.error("Error fetching doctors:", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const fetchSpecialties = async () => {
+  try {
+    const res = await fetch(`${API_URL}/specialties`);
+    if (!res.ok) throw new Error("Failed to fetch specialties");
+    specialties.value = await res.json();
+  } catch (error) {
+    console.error("Error fetching specialties:", error);
+  }
+};
+
 const navigateTo = (path) => {
   router.push(path);
 };
 
 const scrollToBooking = () => {
-  console.log("Scrolling to booking section");
+  const doctorsSection = document.getElementById("doctors-section");
+  if (doctorsSection) {
+    doctorsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
+const openDoctorDetails = (doctor) => {
+  console.log("Opening details for:", doctor);
+};
+
+const bookAppointment = (doctor) => {
+  console.log("Booking appointment with:", doctor);
 };
 
 const toggleTheme = () => {
@@ -327,6 +558,9 @@ onMounted(() => {
     isDark.value = savedTheme === "dark";
   }
 
+  fetchDoctors();
+  fetchSpecialties();
+
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".fixed")) {
       showDropdown.value = false;
@@ -340,5 +574,12 @@ onMounted(() => {
 
 .font-clash {
   font-family: "Clash Display", sans-serif;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
