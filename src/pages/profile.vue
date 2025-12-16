@@ -220,8 +220,8 @@
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-clash font-medium"
                     :class="
                       isDark
-                        ? 'bg-[#ff6000]/10 text-[#ff6000]'
-                        : 'bg-[#ff6000]/5 text-[#ff6000]'
+                        ? 'bg-[#6C5BD4]/10 text-[#6C5BD4]'
+                        : 'bg-[#6C5BD4]/5 text-[#6C5BD4]'
                     "
                   >
                     {{ userData.role === "user" ? "Пациент" : userData.role }}
