@@ -440,7 +440,21 @@
                 </button>
               </div>
 
-              <div class="text-center py-16">
+              <!-- Loading -->
+              <div
+                v-if="loadingAppointments"
+                class="flex items-center justify-center py-16"
+              >
+                <div
+                  class="w-12 h-12 border-4 border-[#ff6000] border-t-transparent rounded-full animate-spin"
+                ></div>
+              </div>
+
+              <!-- Empty State -->
+              <div
+                v-else-if="appointments.length === 0"
+                class="text-center py-16"
+              >
                 <div
                   class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-r from-[#ff6000]/10 to-[#ff8c42]/10 flex items-center justify-center"
                 >
@@ -476,6 +490,129 @@
                 >
                   Записаться сейчас
                 </button>
+              </div>
+
+              <!-- Appointments List -->
+              <div v-else class="space-y-4">
+                <div
+                  v-for="appointment in appointments"
+                  :key="appointment.id"
+                  class="rounded-2xl p-6 border transition-all duration-300"
+                  :class="
+                    isDark
+                      ? 'bg-[#333333] border-gray-700'
+                      : 'bg-gray-50 border-gray-200'
+                  "
+                >
+                  <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                      <h4
+                        class="text-lg font-clash font-bold mb-2"
+                        :class="isDark ? 'text-white' : 'text-[#111111]'"
+                      >
+                        {{ appointment.doctor_name || "Врач" }}
+                      </h4>
+                      <span
+                        class="inline-block px-3 py-1 rounded-full text-xs font-clash font-medium bg-[#6C5BD4]/10 text-[#6C5BD4]"
+                      >
+                        {{ appointment.specialty_name || "Специальность" }}
+                      </span>
+                    </div>
+                    <div
+                      class="px-3 py-1 rounded-full text-xs font-clash font-medium"
+                      :class="getStatusClass(appointment.status)"
+                    >
+                      {{ getStatusText(appointment.status) }}
+                    </div>
+                  </div>
+
+                  <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                      <svg
+                        class="w-5 h-5 flex-shrink-0"
+                        :class="isDark ? 'text-gray-400' : 'text-gray-500'"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span
+                        class="font-clash text-sm"
+                        :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+                      >
+                        {{
+                          formatAppointmentDate(appointment.appointment_date)
+                        }}
+                      </span>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                      <svg
+                        class="w-5 h-5 flex-shrink-0"
+                        :class="isDark ? 'text-gray-400' : 'text-gray-500'"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span
+                        class="font-clash text-sm"
+                        :class="isDark ? 'text-gray-300' : 'text-gray-700'"
+                      >
+                        {{ formatTime(appointment.appointment_time) }}
+                      </span>
+                    </div>
+
+                    <div
+                      v-if="appointment.complaints"
+                      class="pt-3 border-t"
+                      :class="isDark ? 'border-gray-600' : 'border-gray-300'"
+                    >
+                      <p
+                        class="text-xs font-clash mb-1"
+                        :class="isDark ? 'text-gray-500' : 'text-gray-500'"
+                      >
+                        Жалобы:
+                      </p>
+                      <p
+                        class="text-sm font-clash"
+                        :class="isDark ? 'text-gray-300' : 'text-gray-600'"
+                      >
+                        {{ appointment.complaints }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="appointment.status === 'pending'"
+                    class="mt-4 pt-4 border-t flex space-x-3"
+                    :class="isDark ? 'border-gray-600' : 'border-gray-300'"
+                  >
+                    <button
+                      @click="cancelAppointment(appointment.id)"
+                      class="flex-1 px-4 py-2 rounded-xl font-clash text-sm font-medium transition-all"
+                      :class="
+                        isDark
+                          ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                      "
+                    >
+                      Отменить запись
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -581,11 +718,11 @@ const editedUser = ref({
   name: "",
   email: "",
   phone: "",
-
   address: "",
 });
 
 const appointments = ref([]);
+const loadingAppointments = ref(false);
 
 const navItems = [
   {
@@ -639,7 +776,6 @@ const fetchUserData = async () => {
         name: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
-
         address: user.address || "",
       };
       localStorage.setItem("user", JSON.stringify(user));
@@ -668,10 +804,179 @@ const fetchUserData = async () => {
   }
 };
 
+const fetchAppointments = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return;
+  }
+
+  loadingAppointments.value = true;
+
+  try {
+    // Список возможных endpoints для проверки
+    const endpoints = [
+      "/appointments/user",
+      "/appointments/patient",
+      "/appointments/my-appointments",
+      "/user/appointments",
+      "/patient/appointments",
+      "/appointments?userId=" + userData.value.id,
+    ];
+
+    let success = false;
+
+    // Пробуем каждый endpoint
+    for (const endpoint of endpoints) {
+      console.log(`Trying endpoint: ${API_URL}${endpoint}`);
+
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(`Response status for ${endpoint}: ${response.status}`);
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("✅ Appointments received from:", endpoint, result);
+
+        // Обрабатываем разные форматы ответа
+        if (Array.isArray(result)) {
+          appointments.value = result;
+        } else if (result.data && Array.isArray(result.data)) {
+          appointments.value = result.data;
+        } else if (result.appointments && Array.isArray(result.appointments)) {
+          appointments.value = result.appointments;
+        } else if (result.success && result.data) {
+          appointments.value = Array.isArray(result.data) ? result.data : [];
+        } else {
+          appointments.value = [];
+        }
+
+        success = true;
+        break;
+      } else if (response.status === 403) {
+        console.log(`❌ Forbidden (403) for: ${endpoint}`);
+      } else if (response.status === 404) {
+        console.log(`❌ Not Found (404) for: ${endpoint}`);
+      } else {
+        console.log(`❌ Error ${response.status} for: ${endpoint}`);
+      }
+    }
+
+    if (!success) {
+      console.error(
+        "❌ All endpoints failed. User might not have appointments or API structure is different."
+      );
+      appointments.value = [];
+    }
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    appointments.value = [];
+  } finally {
+    loadingAppointments.value = false;
+  }
+};
+
+const cancelAppointment = async (appointmentId) => {
+  const token = localStorage.getItem("token");
+
+  if (!token || !confirm("Вы уверены, что хотите отменить эту запись?")) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/appointments/${appointmentId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      await fetchAppointments();
+      saveMessage.value = "Запись успешно отменена";
+      saveSuccess.value = true;
+      setTimeout(() => {
+        saveMessage.value = "";
+      }, 3000);
+    } else {
+      const errorData = await response.json();
+      saveMessage.value = errorData.message || "Ошибка при отмене записи";
+      saveSuccess.value = false;
+    }
+  } catch (error) {
+    console.error("Error canceling appointment:", error);
+    saveMessage.value = "Ошибка соединения с сервером";
+    saveSuccess.value = false;
+  }
+};
+
+const getStatusClass = (status) => {
+  switch (status) {
+    case "pending":
+      return "bg-yellow-500/10 text-yellow-500";
+    case "confirmed":
+      return "bg-blue-500/10 text-blue-500";
+    case "completed":
+      return "bg-green-500/10 text-green-500";
+    case "cancelled":
+      return "bg-red-500/10 text-red-500";
+    default:
+      return "bg-gray-500/10 text-gray-500";
+  }
+};
+
+const getStatusText = (status) => {
+  switch (status) {
+    case "pending":
+      return "Ожидает";
+    case "confirmed":
+      return "Подтверждено";
+    case "completed":
+      return "Завершено";
+    case "cancelled":
+      return "Отменено";
+    default:
+      return "Неизвестно";
+  }
+};
+
+const formatAppointmentDate = (dateString) => {
+  if (!dateString) return "Не указано";
+  const date = new Date(dateString);
+  const months = [
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря",
+  ];
+  return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+};
+
+const formatTime = (time) => {
+  if (!time) return "";
+  return time.slice(0, 5);
+};
+
 const retryFetch = () => {
   loading.value = true;
   corsError.value = "";
   fetchUserData();
+  fetchAppointments();
 };
 
 onMounted(async () => {
@@ -681,6 +986,7 @@ onMounted(async () => {
   }
 
   await fetchUserData();
+  await fetchAppointments();
 
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".fixed")) {
@@ -742,7 +1048,6 @@ const saveProfile = async () => {
         name: editedUser.value.name,
         email: editedUser.value.email,
         phone: editedUser.value.phone,
-
         address: editedUser.value.address,
       }),
     });
