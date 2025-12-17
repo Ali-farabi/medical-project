@@ -133,7 +133,7 @@
       class="min-h-screen transition-colors duration-300"
       :class="isDark ? 'bg-[#111111]' : 'bg-[#F9FAFB]'"
     >
-      <header class="transition-colors duration-300">
+      <header class="transition-colors duration-300 relative">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-between h-16 sm:h-20">
             <div class="flex-shrink-0">
@@ -145,6 +145,43 @@
                 Care+
               </router-link>
             </div>
+
+            <button
+              @click="toggleMobileMenu"
+              class="md:hidden rounded-lg transition-colors m-12"
+              :class="
+                isDark ? 'text-white ' : 'text-[#111111] hover:bg-gray-100'
+              "
+            >
+              <svg
+                v-if="!isMobileMenuOpen"
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
 
             <nav class="hidden md:flex items-center space-x-2">
               <button
@@ -163,6 +200,35 @@
             </nav>
           </div>
         </div>
+
+        <!-- Mobile Menu -->
+        <transition name="slide-down">
+          <div
+            v-if="isMobileMenuOpen"
+            class="md:hidden absolute top-full left-0 right-0 z-40 transition-all duration-300"
+            :class="
+              isDark
+                ? 'bg-[#111111] border-b border-gray-800'
+                : 'bg-[#F9FAFB] border-b border-gray-200'
+            "
+          >
+            <div class="container mx-auto px-4 py-4 space-y-2">
+              <button
+                v-for="item in navItems"
+                :key="item.name"
+                @click="navigateToMobile(item.path)"
+                class="w-full px-6 py-3 rounded-xl font-clash text-sm font-medium transition-all duration-200 text-left"
+                :class="
+                  isDark
+                    ? 'bg-[#242424] text-[#CBCBCB] hover:bg-[#333333]'
+                    : 'bg-white text-[#555555] hover:bg-gray-50 shadow-sm'
+                "
+              >
+                {{ item.name }}
+              </button>
+            </div>
+          </div>
+        </transition>
       </header>
 
       <main class="container mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
@@ -461,15 +527,15 @@ const router = useRouter();
 const loading = ref(true);
 const isDark = ref(true);
 const showDropdown = ref(false);
+const isMobileMenuOpen = ref(false);
 const searchQuery = ref("");
 const selectedSpecialty = ref("");
 const doctors = ref([]);
 const specialties = ref([]);
-const userRole = ref("user"); // Default role
+const userRole = ref("user");
 
 const API_URL = "https://medical-backend-54hp.onrender.com/api";
 
-// Computed property for navigation items based on user role
 const navItems = computed(() => {
   const baseItems = [{ name: "Overview", path: "/home" }];
 
@@ -535,9 +601,7 @@ const fetchSpecialties = async () => {
   }
 };
 
-// Function to get user role from localStorage or API
 const getUserRole = () => {
-  // Try to get from localStorage first
   const storedUser = localStorage.getItem("user");
   if (storedUser) {
     try {
@@ -549,17 +613,23 @@ const getUserRole = () => {
     }
   }
 
-  // Alternative: get from token or API call
   const token = localStorage.getItem("token");
   if (token) {
-    // You can decode JWT token here or make an API call to get user info
-    // For now, setting default to "user"
     userRole.value = "user";
   }
 };
 
 const navigateTo = (path) => {
   router.push(path);
+};
+
+const navigateToMobile = (path) => {
+  isMobileMenuOpen.value = false;
+  router.push(path);
+};
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
 
 const scrollToBooking = () => {
@@ -593,7 +663,6 @@ onMounted(() => {
     isDark.value = savedTheme === "dark";
   }
 
-  // Get user role on mount
   getUserRole();
 
   fetchDoctors();
@@ -619,5 +688,20 @@ onMounted(() => {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 </style>
