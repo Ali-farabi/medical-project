@@ -148,7 +148,7 @@
 
             <button
               @click="toggleMobileMenu"
-              class="md:hidden rounded-lg transition-colors m-12"
+              class="md:hidden rounded-lg transition-colors m-12 pt-4"
               :class="
                 isDark ? 'text-white ' : 'text-[#111111] hover:bg-gray-100'
               "
