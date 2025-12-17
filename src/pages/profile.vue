@@ -121,14 +121,29 @@
             </router-link>
             <button
               @click="logout"
-              class="px-6 py-2.5 rounded-full font-clash text-sm font-medium transition-all duration-200"
+              class="flex items-center justify-center px-3 py-3 sm:px-6 rounded-xl font-clash text-sm font-medium transition-all duration-200 fixed top-4 right-16 sm:static"
               :class="
                 isDark
                   ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
                   : 'bg-red-50 text-red-600 hover:bg-red-100'
               "
             >
-              Logout
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
+                />
+              </svg>
+
+              <span class="hidden sm:inline ml-2">Logout</span>
             </button>
           </div>
         </div>
@@ -440,7 +455,6 @@
                 </button>
               </div>
 
-              <!-- Loading -->
               <div
                 v-if="loadingAppointments"
                 class="flex items-center justify-center py-16"
@@ -450,7 +464,6 @@
                 ></div>
               </div>
 
-              <!-- Empty State -->
               <div
                 v-else-if="appointments.length === 0"
                 class="text-center py-16"
@@ -492,7 +505,6 @@
                 </button>
               </div>
 
-              <!-- Appointments List -->
               <div v-else class="space-y-4">
                 <div
                   v-for="appointment in appointments"
@@ -814,7 +826,6 @@ const fetchAppointments = async () => {
   loadingAppointments.value = true;
 
   try {
-    // Список возможных endpoints для проверки
     const endpoints = [
       "/appointments/user",
       "/appointments/patient",
@@ -826,7 +837,6 @@ const fetchAppointments = async () => {
 
     let success = false;
 
-    // Пробуем каждый endpoint
     for (const endpoint of endpoints) {
       console.log(`Trying endpoint: ${API_URL}${endpoint}`);
 
@@ -842,9 +852,8 @@ const fetchAppointments = async () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log("✅ Appointments received from:", endpoint, result);
+        console.log(" Appointments received from:", endpoint, result);
 
-        // Обрабатываем разные форматы ответа
         if (Array.isArray(result)) {
           appointments.value = result;
         } else if (result.data && Array.isArray(result.data)) {
@@ -860,17 +869,17 @@ const fetchAppointments = async () => {
         success = true;
         break;
       } else if (response.status === 403) {
-        console.log(`❌ Forbidden (403) for: ${endpoint}`);
+        console.log(` Forbidden (403) for: ${endpoint}`);
       } else if (response.status === 404) {
-        console.log(`❌ Not Found (404) for: ${endpoint}`);
+        console.log(` Not Found (404) for: ${endpoint}`);
       } else {
-        console.log(`❌ Error ${response.status} for: ${endpoint}`);
+        console.log(` Error ${response.status} for: ${endpoint}`);
       }
     }
 
     if (!success) {
       console.error(
-        "❌ All endpoints failed. User might not have appointments or API structure is different."
+        " All endpoints failed. User might not have appointments or API structure is different."
       );
       appointments.value = [];
     }
@@ -928,7 +937,7 @@ const getStatusClass = (status) => {
     case "cancelled":
       return "bg-red-500/10 text-red-500";
     default:
-      return "bg-gray-500/10 text-gray-500";
+      return "bg-[#6C5BD4]/10 text-[#6C5BD4]";
   }
 };
 
@@ -943,7 +952,7 @@ const getStatusText = (status) => {
     case "cancelled":
       return "Отменено";
     default:
-      return "Неизвестно";
+      return "Завершено";
   }
 };
 
@@ -1018,7 +1027,22 @@ const formatDate = (dateString) => {
 const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-  router.push("/");
+
+  userData.value = {
+    id: null,
+    email: "",
+    name: "",
+    role: "user",
+    phone: "",
+    date_of_birth: "",
+    address: "",
+    avatar: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+  appointments.value = [];
+
+  window.location.href = "/login";
 };
 
 const goToBooking = () => {

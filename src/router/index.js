@@ -75,4 +75,4 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
-export { pinia }; // 👈 экспортируем
+export { pinia };
