@@ -61,9 +61,7 @@
           :class="
             !isDark
               ? 'bg-[#ff6000] text-white'
-              : isDark
-              ? 'text-gray-300 hover:bg-[#333333]'
-              : 'text-gray-700 hover:bg-gray-50'
+              : 'text-gray-300 hover:bg-[#333333]'
           "
         >
           <svg
@@ -99,8 +97,6 @@
           :class="
             isDark
               ? 'bg-[#ff6000] text-white'
-              : isDark
-              ? 'text-gray-300 hover:bg-[#333333]'
               : 'text-gray-700 hover:bg-gray-50'
           "
         >
@@ -158,7 +154,6 @@
         Login
       </h2>
 
-      <!-- Сообщение об ошибке -->
       <div
         v-if="error"
         class="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20"
@@ -166,7 +161,6 @@
         <p class="text-red-500 text-sm font-clash text-center">{{ error }}</p>
       </div>
 
-      <!-- Сообщение об успехе -->
       <div
         v-if="success"
         class="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20"
@@ -185,17 +179,23 @@
           </label>
           <input
             v-model="form.email"
+            @blur="validateEmail"
+            @input="emailError = ''"
             type="email"
             placeholder="example@mail.com"
-            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6C5BD4] transition-colors"
-            :class="
+            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 transition-colors"
+            :class="[
+              emailError ? 'ring-2 ring-red-500' : 'focus:ring-[#6C5BD4]',
               isDark
                 ? 'bg-[#333333] border border-gray-700 text-white placeholder-gray-500'
-                : 'bg-[#F9FAFB] border border-gray-200 text-[#111111] placeholder-gray-400'
-            "
+                : 'bg-[#F9FAFB] border border-gray-200 text-[#111111] placeholder-gray-400',
+            ]"
             required
-            :disabled="loading"
+            :disabled="authStore.loading"
           />
+          <p v-if="emailError" class="text-red-500 text-xs mt-1 font-clash">
+            {{ emailError }}
+          </p>
         </div>
 
         <div class="mb-3 sm:mb-4">
@@ -206,25 +206,31 @@
           </label>
           <input
             v-model="form.password"
+            @blur="validatePassword"
+            @input="passwordError = ''"
             type="password"
             placeholder="Enter your password"
-            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6C5BD4] transition-colors"
-            :class="
+            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 transition-colors"
+            :class="[
+              passwordError ? 'ring-2 ring-red-500' : 'focus:ring-[#6C5BD4]',
               isDark
                 ? 'bg-[#333333] border border-gray-700 text-white placeholder-gray-500'
-                : 'bg-[#F9FAFB] border border-gray-200 text-[#111111] placeholder-gray-400'
-            "
+                : 'bg-[#F9FAFB] border border-gray-200 text-[#111111] placeholder-gray-400',
+            ]"
             required
-            :disabled="loading"
+            :disabled="authStore.loading"
           />
+          <p v-if="passwordError" class="text-red-500 text-xs mt-1 font-clash">
+            {{ passwordError }}
+          </p>
         </div>
 
         <button
           type="submit"
-          :disabled="loading"
+          :disabled="authStore.loading"
           class="w-full bg-[#6C5BD4] text-white py-2.5 sm:py-3 my-3 sm:my-5 font-clash rounded-lg hover:bg-[#5a4bc4] transition-all text-sm sm:text-base active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {{ loading ? "Вход..." : "Login" }}
+          {{ authStore.loading ? "Вход..." : "Login" }}
         </button>
       </form>
 
@@ -248,13 +254,14 @@
 
 <script setup>
 import { reactive, ref, onMounted } from "vue";
-import axios from "axios";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth";
 
 const router = useRouter();
+const authStore = useAuthStore();
+
 const isDark = ref(true);
 const showDropdown = ref(false);
-const loading = ref(false);
 
 const form = reactive({
   email: "",
@@ -263,6 +270,35 @@ const form = reactive({
 
 const error = ref("");
 const success = ref("");
+const emailError = ref("");
+const passwordError = ref("");
+
+const validateEmail = () => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!form.email) {
+    emailError.value = "Email обязателен";
+  } else if (!emailRegex.test(form.email)) {
+    emailError.value = "Введите корректный email";
+  } else {
+    emailError.value = "";
+  }
+};
+
+const validatePassword = () => {
+  if (!form.password) {
+    passwordError.value = "Пароль обязателен";
+  } else if (form.password.length < 6) {
+    passwordError.value = "Пароль должен содержать минимум 6 символов";
+  } else {
+    passwordError.value = "";
+  }
+};
+
+const validateForm = () => {
+  validateEmail();
+  validatePassword();
+  return !emailError.value && !passwordError.value;
+};
 
 onMounted(() => {
   const savedTheme = localStorage.getItem("theme");
@@ -290,48 +326,24 @@ const setTheme = (theme) => {
 const handleSubmit = async () => {
   error.value = "";
   success.value = "";
-  loading.value = true;
 
-  try {
-    const response = await axios.post(
-      "https://medical-backend-54hp.onrender.com/api/auth/login",
-      form
-    );
+  if (!validateForm()) {
+    return;
+  }
 
-    console.log("Login response:", response.data);
+  const result = await authStore.login(form);
 
-    if (
-      response.data.success &&
-      response.data.data &&
-      response.data.data.token
-    ) {
-      const token = response.data.data.token;
-      const user = response.data.data.user;
+  if (result.success) {
+    success.value = "Вход выполнен успешно!";
 
-      localStorage.setItem("token", token);
+    form.email = "";
+    form.password = "";
 
-      localStorage.setItem("user", JSON.stringify(user));
-
-      console.log("Token saved:", token);
-      console.log("User saved:", user);
-
-      success.value = "Вход выполнен успешно!";
-
-      form.email = "";
-      form.password = "";
-
-      setTimeout(() => {
-        router.push("/home");
-      }, 1000);
-    } else {
-      error.value = "Не удалось получить токен авторизации";
-    }
-  } catch (err) {
-    console.error("Login error:", err);
-    error.value =
-      err.response?.data?.message || "Ошибка входа. Проверьте данные.";
-  } finally {
-    loading.value = false;
+    setTimeout(() => {
+      router.push("/home");
+    }, 1000);
+  } else {
+    error.value = result.error || "Ошибка входа. Проверьте данные.";
   }
 };
 </script>

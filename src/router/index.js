@@ -1,48 +1,47 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "../stores/auth";
+import { createPinia, setActivePinia } from "pinia";
+
 import Register from "../pages/Register.vue";
 import Login from "../pages/Login.vue";
 import Home from "../pages/homepage.vue";
 import Profile from "../pages/profile.vue";
-import admin from "../pages/ AdminDashboard.vue";
+import AdminDashboard from "../pages/AdminDashboard.vue";
 import BookingPage from "../pages/BookingPage.vue";
 
+// 🔥 АКТИВИРУЕМ PINIA ДЛЯ ROUTER
+const pinia = createPinia();
+setActivePinia(pinia);
+
 const routes = [
-  {
-    path: "/",
-    redirect: "/login",
-  },
+  { path: "/", redirect: "/login" },
   {
     path: "/register",
-    name: "Register",
     component: Register,
+    meta: { requiresGuest: true },
   },
   {
     path: "/login",
-    name: "Login",
     component: Login,
+    meta: { requiresGuest: true },
   },
   {
     path: "/home",
-    name: "Home",
     component: Home,
+    meta: { requiresAuth: true },
   },
   {
     path: "/profile",
-    name: "Profile",
     component: Profile,
+    meta: { requiresAuth: true },
   },
   {
     path: "/admin",
-    name: "Admin",
-    component: admin,
-    meta: {
-      requiresAuth: true,
-      role: "admin",
-    },
+    component: AdminDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: "/booking/:id",
-    name: "Booking",
     component: BookingPage,
     meta: { requiresAuth: true },
   },
@@ -53,4 +52,27 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore(); // ✅ теперь Pinia активна
+
+  if (!authStore.isAuthenticated && localStorage.getItem("token")) {
+    authStore.initAuth();
+  }
+
+  if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    return next("/home");
+  }
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return next("/login");
+  }
+
+  if (to.meta.requiresAdmin && authStore.user?.role !== "admin") {
+    return next("/home");
+  }
+
+  next();
+});
+
 export default router;
+export { pinia }; // 👈 экспортируем
