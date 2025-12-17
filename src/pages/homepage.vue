@@ -278,29 +278,31 @@
 
         <div class="mt-24" id="doctors-section">
           <div
-            class="flex flex-col sm:flex-row items-center justify-between mb-8"
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4"
           >
             <h2
-              class="font-clash text-3xl font-semibold mb-4 sm:mb-0"
+              class="font-clash text-3xl font-semibold"
               :class="isDark ? 'text-white' : 'text-[#111111]'"
             >
               Наши врачи
             </h2>
-            <div class="flex items-center space-x-4">
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <input
                 v-model="searchQuery"
                 type="text"
                 placeholder="Искать врача..."
-                class="px-4 py-3 border font-clash text-sm outline-none rounded-xl w-64"
+                class="px-4 py-3 border font-clash text-sm outline-none rounded-xl w-full sm:w-64"
                 :class="
                   isDark
                     ? 'bg-[#242424] border-gray-700 text-white placeholder-gray-500'
                     : 'bg-white border-gray-200 text-[#111111] placeholder-gray-400 shadow-sm'
                 "
               />
+
               <select
                 v-model="selectedSpecialty"
-                class="px-4 py-3 rounded-xl border font-clash outline-none"
+                class="px-4 py-3 rounded-xl border font-clash outline-none w-full sm:w-64"
                 :class="
                   isDark
                     ? 'bg-[#242424] border-gray-700 text-white'
