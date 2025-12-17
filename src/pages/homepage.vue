@@ -463,14 +463,24 @@ const searchQuery = ref("");
 const selectedSpecialty = ref("");
 const doctors = ref([]);
 const specialties = ref([]);
+const userRole = ref("user"); // Default role
 
 const API_URL = "https://medical-backend-54hp.onrender.com/api";
 
-const navItems = [
-  { name: "Overview", path: "/home" },
-  { name: "Analytics", path: "/analytics" },
-  { name: "Profile", path: "/profile" },
-];
+// Computed property for navigation items based on user role
+const navItems = computed(() => {
+  const baseItems = [{ name: "Overview", path: "/home" }];
+
+  if (userRole.value === "admin") {
+    baseItems.push({ name: "Admin Page", path: "/admin" });
+  } else {
+    baseItems.push({ name: "Analytics", path: "/analytics" });
+  }
+
+  baseItems.push({ name: "Profile", path: "/profile" });
+
+  return baseItems;
+});
 
 const stats = [
   { value: "500+", label: "Врачей" },
@@ -523,6 +533,29 @@ const fetchSpecialties = async () => {
   }
 };
 
+// Function to get user role from localStorage or API
+const getUserRole = () => {
+  // Try to get from localStorage first
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    try {
+      const userData = JSON.parse(storedUser);
+      userRole.value = userData.role || "user";
+      return;
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+    }
+  }
+
+  // Alternative: get from token or API call
+  const token = localStorage.getItem("token");
+  if (token) {
+    // You can decode JWT token here or make an API call to get user info
+    // For now, setting default to "user"
+    userRole.value = "user";
+  }
+};
+
 const navigateTo = (path) => {
   router.push(path);
 };
@@ -537,6 +570,7 @@ const scrollToBooking = () => {
 const openDoctorDetails = (doctor) => {
   router.push(`/booking/${doctor.id}`);
 };
+
 const bookAppointment = (doctor) => {
   router.push(`/booking/${doctor.id}`);
 };
@@ -556,6 +590,9 @@ onMounted(() => {
   if (savedTheme) {
     isDark.value = savedTheme === "dark";
   }
+
+  // Get user role on mount
+  getUserRole();
 
   fetchDoctors();
   fetchSpecialties();

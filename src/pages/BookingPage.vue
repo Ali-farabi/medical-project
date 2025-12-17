@@ -7,7 +7,6 @@
       class="min-h-screen transition-colors duration-300"
       :class="isDark ? 'bg-[#111111]' : 'bg-[#F9FAFB]'"
     >
-      <!-- Header -->
       <header
         class="border-b"
         :class="isDark ? 'border-gray-800' : 'border-gray-200'"
@@ -51,9 +50,7 @@
         </div>
       </header>
 
-      <!-- Main Content -->
       <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Error Alert -->
         <div
           v-if="errorMessage"
           class="max-w-6xl mx-auto mb-6 p-4 rounded-xl border flex items-start space-x-3"
@@ -89,9 +86,7 @@
         </div>
 
         <div class="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          <!-- Left Side - Doctor Info & Calendar -->
           <div class="space-y-6">
-            <!-- Loading Doctor -->
             <div
               v-if="loading"
               class="rounded-2xl border p-6 transition-all duration-300"
@@ -108,7 +103,6 @@
               </div>
             </div>
 
-            <!-- Doctor Card -->
             <div
               v-else-if="doctor"
               class="rounded-2xl border p-6 transition-all duration-300"
@@ -175,7 +169,6 @@
               </div>
             </div>
 
-            <!-- Calendar -->
             <div
               class="rounded-2xl border p-6 transition-all duration-300"
               :class="
@@ -192,7 +185,6 @@
               </h3>
 
               <div class="space-y-4">
-                <!-- Calendar Header -->
                 <div class="flex items-center justify-between mb-4">
                   <button
                     @click="previousMonth"
@@ -250,7 +242,6 @@
                   </button>
                 </div>
 
-                <!-- Days Grid -->
                 <div class="grid grid-cols-7 gap-2">
                   <div
                     v-for="day in ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']"
@@ -296,9 +287,7 @@
             </div>
           </div>
 
-          <!-- Right Side - Time Slots & Medical Info -->
           <div class="space-y-6">
-            <!-- Time Slots -->
             <div
               class="rounded-2xl border p-6 transition-all duration-300"
               :class="
@@ -314,7 +303,6 @@
                 Доступное время
               </h3>
 
-              <!-- Loading -->
               <div
                 v-if="loadingSlots"
                 class="flex items-center justify-center py-20"
@@ -324,7 +312,6 @@
                 ></div>
               </div>
 
-              <!-- No Date Selected -->
               <div
                 v-else-if="!selectedDate"
                 class="flex flex-col items-center justify-center py-20"
@@ -351,7 +338,6 @@
                 </p>
               </div>
 
-              <!-- Time Slots -->
               <div v-else-if="!slotsError" class="space-y-6">
                 <div
                   v-for="period in timePeriods"
@@ -383,7 +369,6 @@
                   </div>
                 </div>
 
-                <!-- No Slots Available -->
                 <div
                   v-if="availableSlots.length === 0"
                   class="text-center py-8"
@@ -397,7 +382,6 @@
                 </div>
               </div>
 
-              <!-- Error -->
               <div
                 v-else
                 class="flex flex-col items-center justify-center py-20"
@@ -430,7 +414,6 @@
               </div>
             </div>
 
-            <!-- Medical Information Form -->
             <div
               v-if="selectedDate && selectedTime"
               class="rounded-2xl border p-6 transition-all duration-300"
@@ -448,7 +431,6 @@
               </h3>
 
               <div class="space-y-4">
-                <!-- Complaints -->
                 <div>
                   <label
                     class="block text-sm font-clash font-medium mb-2"
@@ -469,7 +451,6 @@
                   ></textarea>
                 </div>
 
-                <!-- Chronic Diseases -->
                 <div>
                   <label
                     class="block text-sm font-clash font-medium mb-2"
@@ -490,7 +471,6 @@
                   ></textarea>
                 </div>
 
-                <!-- Height & Weight -->
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label
@@ -539,7 +519,6 @@
               </div>
             </div>
 
-            <!-- Booking Button -->
             <button
               @click="confirmBooking"
               :disabled="!canBook"
@@ -553,7 +532,6 @@
       </main>
     </div>
 
-    <!-- Success Modal -->
     <div
       v-if="showSuccessModal"
       class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
@@ -638,7 +616,6 @@ const currentDate = ref(new Date());
 
 const API_URL = "https://medical-backend-54hp.onrender.com/api";
 
-// Computed property to check if booking can proceed
 const canBook = computed(() => {
   return (
     selectedDate.value &&
@@ -648,7 +625,6 @@ const canBook = computed(() => {
   );
 });
 
-// Calendar
 const currentMonthYear = computed(() => {
   const months = [
     "Январь",
