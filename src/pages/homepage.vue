@@ -542,7 +542,7 @@ const navItems = computed(() => {
   if (userRole.value === "admin") {
     baseItems.push({ name: "Admin Page", path: "/admin" });
   } else {
-    baseItems.push({ name: "Analytics", path: "/analytics" });
+    baseItems.push({ name: "Analytics", path: "/home" });
   }
 
   baseItems.push({ name: "Profile", path: "/profile" });

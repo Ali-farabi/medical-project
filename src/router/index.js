@@ -9,7 +9,6 @@ import Profile from "../pages/profile.vue";
 import AdminDashboard from "../pages/AdminDashboard.vue";
 import BookingPage from "../pages/BookingPage.vue";
 
-// 🔥 АКТИВИРУЕМ PINIA ДЛЯ ROUTER
 const pinia = createPinia();
 setActivePinia(pinia);
 
@@ -53,7 +52,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore(); // ✅ теперь Pinia активна
+  const authStore = useAuthStore();
 
   if (!authStore.isAuthenticated && localStorage.getItem("token")) {
     authStore.initAuth();
